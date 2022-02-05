@@ -1,0 +1,25 @@
+{
+  "local_compute_node": {
+    "machine_num": 1,
+    "machine_id": 0,
+    "thread_num_per_machine": 16,
+    "coroutine_num": 8,
+    "local_port": 12345,
+    "enable_rdma_flush": 1,
+    "enable_selective_flush": 1
+  },
+  "remote_pm_nodes": {
+    "remote_ips": [
+      "10.0.0.1",
+      "10.0.0.5"
+    ],
+    "remote_ports": [
+      12346,
+      12346
+    ],
+    "remote_meta_ports": [
+      12347,
+      12347
+    ]
+  }
+}

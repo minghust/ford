@@ -1,0 +1,10 @@
+{
+  "micro": {
+    "num_keys": 1000000,
+    "is_skewed": true,
+    "zipf_theta": 0.99,
+    "data_set_size": 1,
+    "write_ratio": 25,
+    "//": "//"
+  }
+}
