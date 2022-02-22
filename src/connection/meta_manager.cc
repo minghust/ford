@@ -11,7 +11,7 @@ MetaManager::MetaManager() {
   auto json_config = JsonConfig::load_file(config_filepath);
   auto local_node = json_config.get("local_compute_node");
   local_machine_id = (node_id_t)local_node.get("machine_id").get_int64();
-  txn_system = local_node.get("txn_system").get_int64();
+  // txn_system = local_node.get("txn_system").get_int64();
   // enable_commit_together = local_node.get("enable_commit_together").get_int64();
   // enable_read_backup = local_node.get("enable_read_backup").get_int64();
   enable_rdma_flush = local_node.get("enable_rdma_flush").get_int64();
