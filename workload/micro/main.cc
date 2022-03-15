@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
 
   // e.g. ./micro-bench s-100 means run FORD with skewed access + write ratio 100%
   std::string arg = std::string(argv[1]);
+  std::string s;
   char access_type = arg[0];
   if (access_type == 's') {
     // skewed
