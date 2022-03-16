@@ -76,5 +76,5 @@ int main(int argc, char* argv[]) {
   delete global_meta_man;
   delete smallbank_client;
 
-  CollectResult("SmallBank", std::string(argv[1]));
+  CollectResult("SmallBank", "FORD"); 
 }

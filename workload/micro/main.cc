@@ -99,5 +99,5 @@ int main(int argc, char* argv[]) {
   delete global_meta_man;
   delete micro_client;
 
-  CollectResult("MICRO", std::string(argv[1]));
+  CollectResult("MICRO", "FORD");
 }

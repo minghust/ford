@@ -75,5 +75,5 @@ int main(int argc, char* argv[]) {
   delete global_meta_man;
   delete tpcc_client;
 
-  CollectResult("TPCC", std::string(argv[1]));
+  CollectResult("TPCC", "FORD");
 }

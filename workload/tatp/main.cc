@@ -76,5 +76,5 @@ int main(int argc, char* argv[]) {
   delete global_meta_man;
   delete tatp_client;
 
-  CollectResult("TATP", std::string(argv[1]));
+  CollectResult("TATP", "FORD");
 }
