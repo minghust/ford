@@ -1,5 +1,5 @@
 # FORD
-This is an open source repository for our [paper](https://www.usenix.org/conference/fast22/presentation/zhang-ming) in [FAST 2022](https://www.usenix.org/conference/fast22)
+This is an open source repository for our [paper](https://www.usenix.org/conference/fast22/presentation/zhang-ming) in [FAST 2022](https://www.usenix.org/conference/fast22).
 
 > **FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory**
 > 
@@ -26,6 +26,11 @@ We implement a coroutine-enabled framework that runs FORD and its counterparts i
 - Machines
   - At least 3 machines, in which one acts as the compute pool and other two act as the memory pool to maintain a primary-backup replication
 
+
+# Configure
+- Configure all the options in ```compute_node_config.json``` and ```memory_node_config.json``` in ```config/``` as you need, e.g., machine_num, machine_id, ip, port, and PM path, etc.
+- Configure the options in ```core/base/flags.h```, e.g., ```MAX_ITEM_SIZE```, etc.
+
 # Build
 The codes are constructed by CMake (version >= 3.3). We prepare a shell script for easy building
 
@@ -50,28 +55,25 @@ Note that the Release version is the default option for better performance. Howe
 
 After running the ```build.sh``` script, cmake will automatically generate a ```build/``` directory in which all the compiled libraries and executable files are stored.
 
-# Configure
-Configure all the options in ```compute_node_config.json``` and ```memory_node_config.json``` in ```config/``` as you need, e.g., machine_num, machine_id, ip, port, and PM path, etc.
 
 # Run
-- For each machine in the memory pool: Start server. Due to using PM in *devdax* mode, you may need ```sudo``` if you are not a root user.
+- For each machine in the memory pool: Start server to load tables. Due to using PM in *devdax* mode, you may need ```sudo``` if you are not a root user.
 ```sh
 $ cd ford
 $ cd ./build/memory_pool/server
-$ sudo ./server
+$ sudo ./zm_mem_pool
 ```
 
 - For each machine in the compute pool: After loading database tables in the memory pool, we run a benchmark, e.g., TPCC.
 ```sh
 $ cd ford
-$ mkdir -p ./bench_results/TPCC/
-$ cd ./build/workload/tpcc
-$ ./tpcc_bench 16 8 # run ford with 16 threads and each thread spawns 8 coroutines
+$ cd ./build/compute_pool/run
+$ ./run tpcc ford 16 8 # run ford with 16 threads and each thread spawns 8 coroutines
 ```
 Now, the memory nodes are in a disaggregated mode, i.e., the CPUs are not used for any computation tasks in transaction processing.
 
 # Results
-After running, the summarized attempted and committed throughputs (K txn/sec) and the average 50th and 99th percentile latencies are recorded in ```bench_results/TPCC/result.txt```. Moreover, the detailed results of each thread are recorded in ```bench_results/TPCC/detail_result.txt``` 
+After running, we automatically generate a ```bench_results``` dir to record the results. The summarized attempted and committed throughputs (K txn/sec) and the average 50th and 99th percentile latencies are recorded in ```bench_results/tpcc/result.txt```. Moreover, the detailed results of each thread are recorded in ```bench_results/tpcc/detail_result.txt``` 
 
 # Acknowledgments
 
@@ -84,7 +86,7 @@ We sincerely thank the following open source repos (in the ```thirdparty/``` dir
 # LICENSE
 
 ```text
-Copyright [2021] [Ming Zhang]
+Copyright [2022] [Ming Zhang]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

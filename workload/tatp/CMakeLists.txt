@@ -1,15 +1,13 @@
 # Author: Ming Zhang
-# Copyright (c) 2021
+# Copyright (c) 2022
 
-set(WROKLOAD_SOURCES tatp.cc)
+set(DB_SOURCES tatp_db.cc)
+set(TXN_SOURCES tatp_txn.cc)
 
-add_library(tatp STATIC ${WROKLOAD_SOURCES})
+add_library(tatp_db STATIC ${DB_SOURCES})
+add_library(tatp_txn STATIC ${TXN_SOURCES})
 
-set_target_properties(tatp PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(tatp_db PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(tatp_txn PROPERTIES LINKER_LANGUAGE CXX)
 
-
-set(WORKLOAD_RUN main.cc tatp_bench.cc)
-
-add_executable(tatp_bench ${WORKLOAD_RUN})
-
-target_link_libraries(tatp_bench tatp stat ${WORKLOAD_LIB})
+target_link_libraries(tatp_txn ford)

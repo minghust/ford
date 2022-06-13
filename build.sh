@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Author: Ming Zhang
-# Copyright (c) 2021
+# Copyright (c) 2022
 
 if [[ -d build ]]; then
   echo "Remove existing build directory";
@@ -37,7 +37,7 @@ ${CMAKE_CMD}
 
 if [ "${BUILD_TARGET}" == "server" ];then
   echo "------------------- building server ------------------"
-  make server -j32
+  make zm_mem_pool -j32
 else
   echo "------------------- building client + server ------------------"
   make -j32

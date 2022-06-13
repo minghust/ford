@@ -1,5 +1,5 @@
 // Author: Ming Zhang
-// Copyright (c) 2021
+// Copyright (c) 2022
 
 #pragma once
 
@@ -14,10 +14,10 @@
 #include "rlib/rdma_ctrl.hpp"
 
 // Load DB
-#include "micro/micro.h"
-#include "smallbank/smallbank.h"
-#include "tatp/tatp.h"
-#include "tpcc/tpcc.h"
+#include "micro/micro_db.h"
+#include "smallbank/smallbank_db.h"
+#include "tatp/tatp_db.h"
+#include "tpcc/tpcc_db.h"
 
 using namespace rdmaio;
 

@@ -5,6 +5,6 @@
     "zipf_theta": 0.99,
     "data_set_size": 1,
     "write_ratio": 25,
-    "//": "//"
+    "attempted_num": 100000
   }
 }

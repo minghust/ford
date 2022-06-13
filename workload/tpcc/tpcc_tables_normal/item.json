@@ -1,6 +1,6 @@
 {
   "table": {
     "name": "ITEM",
-    "item_count": 10000
+    "bkt_num": 10000
   }
 }

@@ -1,5 +1,5 @@
 # Author: Ming Zhang
-# Copyright (c) 2021
+# Copyright (c) 2022
 
 cmake_minimum_required(VERSION 3.3)
 
@@ -16,14 +16,18 @@ else()
 endif()
 
 include_directories(
-        include
-        thirdparty
+    core
+    workload
+    thirdparty
+    compute_pool
 )
 
 add_subdirectory(thirdparty/rlib)
 
-add_subdirectory(src)
+add_subdirectory(core)
 
 add_subdirectory(workload)
 
-add_subdirectory(memory_pool)
+add_subdirectory(compute_pool) # Dep list: rlib->ford->workload_db+_txn->worker
+
+add_subdirectory(memory_pool) # Dep list: rlib->workload_db->server

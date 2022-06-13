@@ -1,15 +1,13 @@
 # Author: Ming Zhang
-# Copyright (c) 2021
+# Copyright (c) 2022
 
-set(WROKLOAD_SOURCES smallbank.cc)
+set(DB_SOURCES smallbank_db.cc)
+set(TXN_SOURCES smallbank_txn.cc)
 
-add_library(smallbank STATIC ${WROKLOAD_SOURCES})
+add_library(smallbank_db STATIC ${DB_SOURCES})
+add_library(smallbank_txn STATIC ${TXN_SOURCES})
 
-set_target_properties(smallbank PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(smallbank_db PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(smallbank_txn PROPERTIES LINKER_LANGUAGE CXX)
 
-
-set(WORKLOAD_RUN main.cc smallbank_bench.cc)
-
-add_executable(smallbank_bench ${WORKLOAD_RUN})
-
-target_link_libraries(smallbank_bench smallbank stat ${WORKLOAD_LIB})
+target_link_libraries(smallbank_txn ford)
