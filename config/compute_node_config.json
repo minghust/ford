@@ -2,10 +2,10 @@
   "local_compute_node": {
     "machine_num": 1,
     "machine_id": 0,
-"thread_num_per_machine": 16,
-"coroutine_num": 8,
+    "thread_num_per_machine": 16,
+    "coroutine_num": 8,
     "local_port": 12345,
-"txn_system": 2,
+    "txn_system": 2,
     "comment": "0 is farm, 1 is drtmh, 2 is ford"
   },
   "remote_pm_nodes": {
