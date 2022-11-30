@@ -6,7 +6,7 @@
 #include <functional>
 #include <iostream>
 
-#include "base/flags.h"
+#include "flags.h"
 #include "dtx/structs.h"
 
 struct LockBkt {

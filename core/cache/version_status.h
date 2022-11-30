@@ -6,7 +6,7 @@
 #include <functional>
 #include <iostream>
 
-#include "base/flags.h"
+#include "flags.h"
 #include "dtx/structs.h"
 
 // Assumption: In the future, there is one compute pool and one memory pool. Each pool contains many units intead of standalone machines.

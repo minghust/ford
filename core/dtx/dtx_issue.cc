@@ -305,7 +305,6 @@ bool DTX::IssueCommitAll(std::vector<CommitWrite>& pending_commit_write, char* c
     // Get the offset (item's addr relative to table's addr) in backup
     // The offset is the same with that in primary
     const HashMeta& primary_hash_meta = global_meta_man->GetPrimaryHashMetaWithTableID(it->table_id);
-    // TODO: If the node is in the *next* bucket? The relative offset is not the same as that in primary node
     auto offset_in_backup_hash_store = it->remote_offset - primary_hash_meta.base_off;
 
     // Get all the backup queue pairs and hash metas for this table

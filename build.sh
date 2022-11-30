@@ -3,11 +3,6 @@
 # Author: Ming Zhang
 # Copyright (c) 2022
 
-if [[ -d build ]]; then
-  echo "Remove existing build directory";
-  rm -rf build
-fi
-
 BUILD_TARGET=client
 BUILD_TYPE=Release
 
@@ -28,8 +23,13 @@ do
   esac
 done
 
-echo "Create build directory";
-mkdir build
+if [[ -d build ]]; then
+  echo "Build directory exists";
+else
+  echo "Create build directory";
+  mkdir build
+fi
+
 CMAKE_CMD="cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ../"
 echo ${CMAKE_CMD}
 cd ./build

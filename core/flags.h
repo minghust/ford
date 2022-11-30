@@ -9,6 +9,7 @@
 // 40: tatp
 // 664: tpcc
 // 40: micro-benchmark
+
 const size_t MAX_ITEM_SIZE = 664;
 
 /*********************** For FORD **********************/
@@ -41,7 +42,7 @@ const size_t MAX_ITEM_SIZE = 664;
 
 // 0: Remote validation for RO set
 // 1: Cache versions in local
-#define LOCAL_VALIDATION 1
+#define LOCAL_VALIDATION 0
 
 // Hash table parameters for localized validation
 // For tatp

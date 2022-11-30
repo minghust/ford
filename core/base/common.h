@@ -6,7 +6,7 @@
 #include <cstddef>  // For size_t
 #include <cstdint>  // For uintxx_t
 
-#include "base/flags.h"
+#include "flags.h"
 
 // Global specification
 using tx_id_t = uint64_t;     // Transaction id type
@@ -31,7 +31,7 @@ const mr_id_t CLIENT_MR_ID = 100;
 const uint64_t MEM_STORE_META_END = 0xE0FF0E0F;
 
 // Node and thread conf
-#define BACKUP_DEGREE 1          // Backup memory node number. MUST **NOT** BE SET TO 0
+#define BACKUP_DEGREE 2          // Backup memory node number. MUST **NOT** BE SET TO 0
 #define MAX_REMOTE_NODE_NUM 100  // Max remote memory node number
 #define MAX_DB_TABLE_NUM 15      // Max DB tables
 

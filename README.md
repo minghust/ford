@@ -29,7 +29,8 @@ We implement a coroutine-enabled framework that runs FORD and its counterparts i
 
 # Configure
 - Configure all the options in ```compute_node_config.json``` and ```memory_node_config.json``` in ```config/``` as you need, e.g., machine_num, machine_id, ip, port, and PM path, etc.
-- Configure the options in ```core/base/flags.h```, e.g., ```MAX_ITEM_SIZE```, etc.
+- Configure the options in ```core/flags.h```, e.g., ```MAX_ITEM_SIZE```, etc.
+- Configure the number of backup replicas in ```core/base/common.h```, i.e., BACKUP_DEGREE.
 
 # Build
 The codes are constructed by CMake (version >= 3.3). We prepare a shell script for easy building

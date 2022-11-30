@@ -12,7 +12,6 @@ bool DTX::CompareIssueReadRO(std::vector<DirectRead>& pending_direct_ro,
     auto remote_node_id = global_meta_man->GetPrimaryNodeID(it->table_id);
     RCQP* qp = thread_qp_man->GetRemoteDataQPWithNodeID(remote_node_id);
 
-    // Give 80% cache available for FaRM in TPCC
     if (USE_LOCAL_ADDR_CACHE) {
       // DrTM+H leverages local address cache
       auto offset = addr_cache->Search(remote_node_id, it->table_id, it->key);
@@ -50,7 +49,6 @@ bool DTX::CompareIssueReadRW(std::vector<DirectRead>& pending_direct_rw,
     auto remote_node_id = global_meta_man->GetPrimaryNodeID(it->table_id);
     RCQP* qp = thread_qp_man->GetRemoteDataQPWithNodeID(remote_node_id);
 
-    // 80% cache available for FaRM in TPCC
     if (USE_LOCAL_ADDR_CACHE) {
       // DrTM+H leverages local address cache
       auto offset = addr_cache->Search(remote_node_id, it->table_id, it->key);
@@ -169,7 +167,6 @@ bool DTX::CompareIssueCommitBackup() {
       // Use data QP, because writing logs is on the critical path
       RCQP* data_qp = thread_qp_man->GetRemoteDataQPWithNodeID(node_id);
       memcpy(header, (char*)it.get(), DataItemSize);
-      // TODO: log offset
       offset_t log_offset = thread_remote_log_offset_alloc->GetNextLogOffset(node_id, total_size);
       auto& remote_log_mr = thread_qp_man->GetRemoteLogQPWithNodeID(node_id)->remote_mr_;
       auto& local_data_mr = data_qp->local_mr_;
@@ -202,7 +199,6 @@ bool DTX::CompareIssueCommitBackupFullFlush() {
       // Use data QP, because writing logs is on the critical path
       RCQP* data_qp = thread_qp_man->GetRemoteDataQPWithNodeID(node_id);
       memcpy(header, (char*)it.get(), DataItemSize);
-      // TODO: log offset
       offset_t log_offset = thread_remote_log_offset_alloc->GetNextLogOffset(node_id, total_size);
       auto& remote_log_mr = thread_qp_man->GetRemoteLogQPWithNodeID(node_id)->remote_mr_;
       auto& local_data_mr = data_qp->local_mr_;
@@ -238,7 +234,6 @@ bool DTX::CompareIssueCommitBackupSelectiveFlush() {
       memcpy(header, (char*)it.get(), DataItemSize);
       // Use data QP, because writing logs is on the critical path
       RCQP* data_qp = thread_qp_man->GetRemoteDataQPWithNodeID(node_id);
-      // TODO: log offset
       offset_t log_offset = thread_remote_log_offset_alloc->GetNextLogOffset(node_id, total_size);
       auto& remote_log_mr = thread_qp_man->GetRemoteLogQPWithNodeID(node_id)->remote_mr_;
       auto& local_data_mr = data_qp->local_mr_;
@@ -280,7 +275,6 @@ bool DTX::CompareIssueCommitBackupBatchSelectFlush() {
       // Use data QP, because writing logs is on the critical path
       RCQP* data_qp = thread_qp_man->GetRemoteDataQPWithNodeID(node_id);
       memcpy(header, (char*)it.get(), DataItemSize);
-      // TODO: log offset
       offset_t log_offset = thread_remote_log_offset_alloc->GetNextLogOffset(node_id, total_size);
       auto& remote_log_mr = thread_qp_man->GetRemoteLogQPWithNodeID(node_id)->remote_mr_;
       auto& local_data_mr = data_qp->local_mr_;
@@ -343,7 +337,6 @@ bool DTX::CompareIssueTruncate() {
     char* data_buf = thread_rdma_buffer_alloc->Alloc(DataItemSize);
     memcpy(data_buf, (char*)it.get(), DataItemSize);
     const HashMeta& primary_hash_meta = global_meta_man->GetPrimaryHashMetaWithTableID(it->table_id);
-    // TODO: If the node is in the *next* bucket? The relative offset is not the same as that in primary node
     auto offset_in_backup_hash_store = it->remote_offset - primary_hash_meta.base_off;
 
     // Get all the backup queue pairs and hash metas for this table
