@@ -1,14 +1,14 @@
 # FORD
-This is an open source repository for our [paper](https://www.usenix.org/conference/fast22/presentation/zhang-ming) in [FAST 2022](https://www.usenix.org/conference/fast22).
+This is an open source repository for our papers in [FAST 2022](https://www.usenix.org/conference/fast22) and [ACM Transactions on Storage](https://dl.acm.org/journal/tos).
 
-> **FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory**
-> 
-> Ming Zhang, Yu Hua, Pengfei Zuo, Lurong Liu. *Huazhong University of Science and Technology*
+> Ming Zhang, Yu Hua, Pengfei Zuo, and Lurong Liu. "FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory". In 20th USENIX Conference on File and Storage Technologies, FAST 2022, Santa Clara, California, USA, February 22 - 24, 2022, pages 51-68. USENIX Association, 2022.
+>
+> Ming Zhang, Yu Hua, Pengfei Zuo, and Lurong Liu. "Localized Validation Accelerates Distributed Transactions on Disaggregated Persistent Memory". Accepted and to appear in ACM Transactions on Storage (TOS), 2023.
 
 # Brief Introduction
 Persistent memory (PM) disaggregation improves the resource utilization and failure isolation to build a scalable and cost-effective remote memory pool. However, due to offering limited computing power and overlooking the persistence and bandwidth properties of real PMs, existing distributed transaction schemes, which are designed for legacy DRAM-based monolithic servers, fail to efficiently work on the disaggregated PM architecture.
 
-We propose FORD, a **F**ast **O**ne-sided **R**DMA-based **D**istributed transaction system. FORD thoroughly leverages one-sided RDMA to handle transactions for bypassing the remote CPU in PM pool. To reduce the round trips, FORD batches the read and lock operations into one request to eliminate extra locking and validations. To accelerate the transaction commit, FORD updates all the remote replicas in a single round trip with parallel undo logging and data visibility control. Moreover, considering the limited PM bandwidth, FORD enables the backup replicas to be read to alleviate the load on the primary replicas, thus improving the throughput. To efficiently guarantee the remote data persistency in the PM pool, FORD selectively flushes data to the backup replicas to mitigate the network overheads. Experimental results demonstrate that FORD improves the transaction throughput and reduces the latency. To learn more, please read our paper.
+We propose FORD, a **F**ast **O**ne-sided **R**DMA-based **D**istributed transaction system. FORD thoroughly leverages one-sided RDMA to handle transactions for bypassing the remote CPU in PM pool. To reduce the round trips, FORD batches the read and lock operations into one request to eliminate extra locking and validations. To accelerate the transaction commit, FORD updates all the remote replicas in a single round trip with parallel undo logging and data visibility control. Moreover, considering the limited PM bandwidth, FORD enables the backup replicas to be read to alleviate the load on the primary replicas, thus improving the throughput. To efficiently guarantee the remote data persistency in the PM pool, FORD selectively flushes data to the backup replicas to mitigate the network overheads. FORD further leverages a localized validation scheme to transfer the validation operations for the read-only data from remote to local as much as possible to reduce the round trips. Experimental results demonstrate that FORD improves the transaction throughput and reduces the latency. To learn more, please read our papers.
 
 # Framework
 We implement a coroutine-enabled framework that runs FORD and its counterparts in the same manner when processing distributed transactions: 1) Issue one-sided RDMA requests. 2) Yield CPU to another coroutine. 3) Check all the RDMA ACKs and replies. This is in fact an interleaved execution model that aims to saturate the CPUs in the compute pool to improve the throughput.
@@ -36,7 +36,7 @@ We implement a coroutine-enabled framework that runs FORD and its counterparts i
 The codes are constructed by CMake (version >= 3.3). We prepare a shell script for easy building
 
 ```sh
-$ git clone git@github.com:minghust/ford.git
+$ git clone https://github.com/minghust/ford.git
 $ cd ford
 ```
 
