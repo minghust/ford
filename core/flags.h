@@ -69,7 +69,7 @@ const size_t MAX_ITEM_SIZE = 664;
 // 1: Cache addrs in local. Default for DrTM+h, Optmized for FaRM
 #define USE_LOCAL_ADDR_CACHE 0
 
-// 1: Use FaRM@NSDI'14 and DrTM+R@EuroSys'16 lock-free read, i.e., the locks will abort the read requests
+// 1: Locks block reads
 // 0: Use FORD's machenism, i.e., visibility control to enable read locked data but not invisible data
 // This is an **opposite** scheme compared with our visibility control, i.e., open this will close visibility, and close this will open visibility
 #define LOCK_REFUSE_READ_RO 0

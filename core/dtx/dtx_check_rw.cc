@@ -221,6 +221,8 @@ int DTX::FindInsertOff(InsertOffRead& res, std::list<InvisibleRead>& pending_inv
     // it indicates that this is caused by an insertion.
 #if LOCK_REFUSE_READ_RW
     if (it->lock == STATE_LOCKED) return SLOT_LOCKED;
+    it->remote_offset = possible_insert_position;
+    old_version_for_insert.push_back(OldVersionForInsert{.table_id = it->table_id, .key = it->key, .version = old_version});
 #else
     it->remote_offset = possible_insert_position;
     old_version_for_insert.push_back(OldVersionForInsert{.table_id = it->table_id, .key = it->key, .version = old_version});
