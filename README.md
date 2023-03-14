@@ -3,7 +3,7 @@ This is an open source repository for our papers in [FAST 2022](https://www.usen
 
 > **Ming Zhang**, Yu Hua, Pengfei Zuo, and Lurong Liu. "FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory". In 20th USENIX Conference on File and Storage Technologies, FAST 2022, Santa Clara, California, USA, February 22 - 24, 2022, pages 51-68. USENIX Association, 2022.
 >
-> **Ming Zhang**, Yu Hua, Pengfei Zuo, and Lurong Liu. "Localized Validation Accelerates Distributed Transactions on Disaggregated Persistent Memory". Accepted and to appear in ACM Transactions on Storage (TOS), 2023.
+> **Ming Zhang**, Yu Hua, Pengfei Zuo, and Lurong Liu. "Localized Validation Accelerates Distributed Transactions on Disaggregated Persistent Memory". ACM Transactions on Storage (TOS), 2023.
 
 # Brief Introduction
 Persistent memory (PM) disaggregation improves the resource utilization and failure isolation to build a scalable and cost-effective remote memory pool. However, due to offering limited computing power and overlooking the persistence and bandwidth properties of real PMs, existing distributed transaction schemes, which are designed for legacy DRAM-based monolithic servers, fail to efficiently work on the disaggregated PM architecture.
