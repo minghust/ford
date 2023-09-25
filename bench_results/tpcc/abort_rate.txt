@@ -1,0 +1,7 @@
+ford tx_type try_num commit_num abort_rate
+NewOrder 360827 7454 0.979342
+Payment 343030 163034 0.524724
+Delivery 32232 32110 0.00378506
+OrderStatus 32031 32013 0.000561956
+StockLevel 31880 159 0.995013
+

@@ -1,17 +1,17 @@
 {
   "local_memory_node": {
-    "machine_num": 2,
+    "machine_num": 1,
     "machine_id": 0,
     "local_port": 12346,
     "local_meta_port": 12347,
-    "use_pm": 1,
-    "mem_size_GB": 8,
+    "use_pm": 0,
+    "mem_size_GB": 16,
     "log_buf_size_GB": 1,
     "pm_root": "/dev/dax0.1",
     "workload": "TPCC"
   },
   "remote_compute_nodes": {
-    "compute_node_ips": ["10.0.0.7"],
+    "compute_node_ips": ["127.0.0.1"],
     "compute_node_ports": [12345]
   }
 }
