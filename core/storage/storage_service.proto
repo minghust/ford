@@ -1,0 +1,27 @@
+syntax="proto3";
+option cc_generic_services = true;
+
+package storage_service;
+
+message LogWriteRequest {
+    string log = 1;
+};
+
+message LogWriteResponse{}
+
+message GetPageRequest {
+	message PageID{
+    	sint32 fd = 1;
+        sint32 page_no = 2;
+    }
+	PageID page_id = 1;
+};
+
+message GetPageResponse {
+    string data = 1;
+};
+
+service StorageService {
+    rpc LogWrite(LogWriteRequest) returns (LogWriteResponse);
+    rpc GetPage(GetPageRequest) returns (GetPageResponse);
+};
