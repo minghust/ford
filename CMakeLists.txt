@@ -83,3 +83,5 @@ add_subdirectory(workload)
 add_subdirectory(compute_pool) # Dep list: rlib->ford->workload_db+_txn->worker
 
 add_subdirectory(memory_pool) # Dep list: rlib->workload_db->server
+
+add_subdirectory(storage_pool)

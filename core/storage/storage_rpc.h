@@ -9,7 +9,7 @@
 namespace storage_service{
 class StoragePoolImpl : public StorageService{  
   public:
-    StoragePoolImpl(LogManager log_manager, DiskManager disk_manager)
+    StoragePoolImpl(LogManager* log_manager, DiskManager* disk_manager)
         :log_manager_(log_manager), disk_manager_(disk_manager){};
 
     virtual ~StoragePoolImpl() {};
@@ -22,7 +22,7 @@ class StoragePoolImpl : public StorageService{
             
         brpc::ClosureGuard done_guard(done);
         
-        log_manager_.add_log_to_buffer(request->log());
+        log_manager_->add_log_to_buffer(request->log());
         
         return;
     };
@@ -40,7 +40,7 @@ class StoragePoolImpl : public StorageService{
 
         char data[4096];
 
-        disk_manager_.read_page(fd, page_no, data, 4096);
+        disk_manager_->read_page(fd, page_no, data, 4096);
 
         response->set_data(std::string(data, 4096));
 
@@ -48,8 +48,8 @@ class StoragePoolImpl : public StorageService{
     };
 
   private:
-    LogManager log_manager_;
-    DiskManager disk_manager_;
+    LogManager* log_manager_;
+    DiskManager* disk_manager_;
 
   };
 

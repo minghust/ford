@@ -12,6 +12,7 @@
 #include <mutex>
 
 using page_id_t = int32_t;   // page id type , 页ID
+static constexpr int INVALID_PAGE_ID = -1;                                    // invalid page id
 
 /**
  * @description: 存储层每个Page的id的声明
