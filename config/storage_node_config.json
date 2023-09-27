@@ -1,0 +1,14 @@
+{
+    "local_storage_node": {
+      "machine_num": 1,
+      "machine_id": 0,
+      "local_port": 12348,
+      "local_meta_port": 12349,
+      "log_buf_size_GB": 1,
+      "use_rdma": true
+    },
+    "remote_compute_nodes": {
+      "compute_node_ips": ["127.0.0.1"],
+      "compute_node_ports": [12345]
+    }
+}
