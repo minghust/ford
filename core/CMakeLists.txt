@@ -24,10 +24,16 @@ set(SCHEDULER_SRC
         scheduler/corotine_scheduler.cc
         )
 
+set(STORAGE_SRC
+        storage/storage_service.pb.cc
+        storage/storage_rpc.cc
+        )
+
 add_library(ford STATIC
         ${CONNECTION_SRC}
         ${DTX_SRC}
         ${SCHEDULER_SRC}
+        ${STORAGE_SRC}
         )
 
 set_target_properties(ford PROPERTIES LINKER_LANGUAGE CXX)

@@ -31,6 +31,6 @@ int main(int argc, char* argv[]) {
     // 在这里开始构造disk_manager, log_manager, server
     auto disk_manager = std::make_shared<DiskManager>();
     auto log_manager = std::make_shared<LogManager>();
-    auto server = std::make_shared<Server>(local_port, use_rdma, disk_manager, log_manager);
+    auto server = std::make_shared<Server>(local_port, use_rdma, disk_manager.get(), log_manager.get());
 
 }
