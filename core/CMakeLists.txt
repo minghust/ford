@@ -24,10 +24,15 @@ set(SCHEDULER_SRC
         scheduler/corotine_scheduler.cc
         )
 
+set(LOG_SRC
+        log/logreplay.cc
+        log/logparse.cc)
+
 add_library(ford STATIC
         ${CONNECTION_SRC}
         ${DTX_SRC}
         ${SCHEDULER_SRC}
+        ${LOG_SRC}
         )
 
 set_target_properties(ford PROPERTIES LINKER_LANGUAGE CXX)
