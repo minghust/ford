@@ -19,6 +19,11 @@ using itemkey_t = uint64_t;   // Data item key type, used in DB tables
 using offset_t = int64_t;     // Offset type. Usually used in remote offset for RDMA
 using version_t = uint64_t;   // Version type, used in version checking
 using lock_t = uint64_t;      // Lock type, used in remote locking
+using lsn_t = uint64_t;       // log sequence number, used for storage_node log storage
+using page_id_t = uint32_t;   // page id type
+using batch_id_t = uint64_t;  // batch id type
+#define PAGE_SIZE 4096
+
 
 // Memory region ids for server's hash store buffer and undo log buffer
 const mr_id_t SERVER_HASH_BUFF_ID = 97;
@@ -48,3 +53,9 @@ const uint64_t MEM_STORE_META_END = 0xE0FF0E0F;
 // Helpful for improving condition prediction hit rate
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #define likely(x) __builtin_expect(!!(x), 1)
+
+// invalid value for common identifiers
+#define INVALID_LSN -1
+#define INVALID_TXN_ID -1
+#define INVALID_NODE_ID -1
+#define INVALID_BATCH_ID -1
