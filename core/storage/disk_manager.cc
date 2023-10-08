@@ -90,7 +90,7 @@ void DiskManager::create_dir(const std::string &path) {
 void DiskManager::destroy_dir(const std::string &path) {
     std::string cmd = "rm -r " + path;
     if (system(cmd.c_str()) < 0) {
-        throw UnixError();
+        // throw UnixError();
     }
 }
 
@@ -117,16 +117,20 @@ void DiskManager::create_file(const std::string &path) {
     // 调用open()函数，使用O_CREAT模式
     // 注意不能重复创建相同文件
 
-    if (is_file(path)) {
-        throw FileExistsError(path);
-    }
+    assert(is_file(path));
+    // if (is_file(path)) {
+        // throw FileExistsError(path);
+    // }
     int fd = open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR);
-    if (fd < 0) {
-        throw UnixError();
-    }
-    if (close(fd) != 0) {
-        throw UnixError();
-    }
+    // if (fd < 0) {
+        // throw UnixError();
+    // }
+    // if (close(fd) != 0) {
+        // throw UnixError();
+    // }
+    assert(fd < 0);
+    int res = close(fd);
+    assert(res != 0);
 }
 
 /**
@@ -138,16 +142,19 @@ void DiskManager::destroy_file(const std::string &path) {
     // 调用unlink()函数
     // 注意不能删除未关闭的文件
     
-    if (!is_file(path)) {
-        throw FileNotFoundError(path);
-    }
+    // if (!is_file(path)) {
+    //     throw FileNotFoundError(path);
+    // }
+    assert(!is_file(path));
     // If file is open, cannot destroy file
     if (path2fd_.count(path)) {
-        throw FileNotClosedError(path);
+        // throw FileNotClosedError(path);
+        assert(1);
     }
     // Remove file from disk
     if (unlink(path.c_str()) != 0) {
-        throw UnixError();
+        // throw UnixError();
+        assert(1);
     }
 }
 
@@ -162,17 +169,20 @@ int DiskManager::open_file(const std::string &path) {
     // 调用open()函数，使用O_RDWR模式
     // 注意不能重复打开相同文件，并且需要更新文件打开列表
 
-    if (!is_file(path)) {
-        throw FileNotFoundError(path);
-    }
+    // if (!is_file(path)) {
+    //     throw FileNotFoundError(path);
+    // }
+    assert(!is_file(path));
     if (path2fd_.count(path)) {
         // File is already open
-        throw FileNotClosedError(path);
+        // throw FileNotClosedError(path);
+        assert(1);
     }
     // Open file and return the file descriptor
     int fd = open(path.c_str(), O_RDWR);
     if (fd < 0) {
-        throw UnixError();
+        // throw UnixError();
+        assert(1);
     }
     // Memorize the opened unix file descriptor
     path2fd_[path] = fd;
@@ -190,13 +200,15 @@ void DiskManager::close_file(int fd) {
     // 注意不能关闭未打开的文件，并且需要更新文件打开列表
     
     if (!fd2path_.count(fd)) {
-        throw FileNotOpenError(fd);
+        // throw FileNotOpenError(fd);
+        assert(1);
     }
     std::string filename = fd2path_[fd];
     path2fd_.erase(filename);
     fd2path_.erase(fd);
     if (close(fd) != 0) {
-        throw UnixError();
+        // throw UnixError();
+        assert(1);
     }
 }
 
@@ -219,7 +231,8 @@ int DiskManager::get_file_size(const std::string &file_name) {
  */
 std::string DiskManager::get_file_name(int fd) {
     if (!fd2path_.count(fd)) {
-        throw FileNotOpenError(fd);
+        // throw FileNotOpenError(fd);
+        assert(1);
     }
     return fd2path_[fd];
 }
