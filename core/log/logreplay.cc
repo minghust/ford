@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "logreplay.h"
 
 void LogReplay::apply_sigle_log(LogRecord* log) {
@@ -27,5 +29,18 @@ void LogReplay::apply_sigle_log(LogRecord* log) {
             int fd = disk_manager_->get_file_fd(table_name);
             disk_manager_->update_value(fd, update_log->rid_.page_no_, update_log->rid_.slot_offset_, update_log->new_value_.value_, update_log->new_value_.value_size_ * sizeof(char));
         }
+        case LogType::NEWPAGE: {
+            NewPageLogRecord* new_page_log = dynamic_cast<NewPageLogRecord*>(log);
+            std::string table_name(new_page_log->table_name_, new_page_log->table_name_ + new_page_log->table_name_size_);
+            int fd = disk_manager_->get_file_fd(table_name);
+            int page_no = disk_manager_->allocate_page(fd);
+            assert(page_no != new_page_log->page_no_);
+
+            disk_manager_->update_value(fd, PAGE_NO_RM_FILE_HDR, OFFSET_NUM_PAGES, (char*)(&new_page_log->num_pages_), sizeof(int));
+            disk_manager_->update_value(fd, PAGE_NO_RM_FILE_HDR, OFFSET_FIRST_FREE_PAGE_NO, (char*)(&new_page_log->first_free_page_no_), sizeof(int));
+            disk_manager_->update_value(fd, page_no, OFFSET_NEXT_FREE_PAGE_NO, (char*)(&new_page_log->next_free_page_no_), sizeof(int));
+        } break;
+        default:
+        break;
     }
 }

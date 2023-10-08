@@ -90,11 +90,6 @@ class DiskManager {
 
     int get_file_fd(const std::string &file_name);
 
-    /*日志操作*/
-    int read_log(char *log_data, int size, int offset);
-
-    void write_log(char *log_data, int size);
-
     void SetLogFd(int log_fd) { log_fd_ = log_fd; }
 
     int GetLogFd() { return log_fd_; }
