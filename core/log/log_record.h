@@ -31,7 +31,8 @@ enum LogType: int {
     DELETE,
     BEGIN,
     COMMIT,
-    ABORT
+    ABORT,
+    NEWPAGE
 };
 
 /* used for debug, convert LogType into string */
@@ -352,7 +353,7 @@ public:
         // int offset = OFFSET_LOG_DATA + delete_value_.value_size_ + sizeof(int);
         // rid_ = *reinterpret_cast<const Rid*>(src + offset);
         // offset += sizeof(Rid);
-        int offset = 0;
+        int offset = OFFSET_LOG_DATA;
         table_name_size_ = *reinterpret_cast<const size_t*>(src + offset);
         offset += sizeof(size_t);
         table_name_ = new char[table_name_size_];
@@ -387,6 +388,7 @@ public:
 class UpdateLogRecord: public LogRecord {
 public:
     UpdateLogRecord() {
+        log_batch_id_ = INVALID_BATCH_ID;
         log_type_ = LogType::UPDATE;
         lsn_ = INVALID_LSN;
         log_tot_len_ = LOG_HEADER_SIZE;
@@ -412,6 +414,10 @@ public:
         memcpy(table_name_, table_name.c_str(), table_name_size_);
         log_tot_len_ += table_name_size_;
     }
+    ~UpdateLogRecord() {
+        if(table_name_ != nullptr)
+            delete[] table_name_;
+    }
 
     void serialize(char* dest) const override {
         LogRecord::serialize(dest);
@@ -435,7 +441,7 @@ public:
         // printf("finish deserialize log header\n");
         // old_value_.Deserialize(src + OFFSET_LOG_DATA);
         // printf("finish deserialze old value\n");
-        int offset = 0;
+        int offset = OFFSET_LOG_DATA;
         new_value_.Deserialize(src + offset);
         // printf("finish deserialze new value\n");
         offset += sizeof(int) + new_value_.value_size_;
@@ -460,4 +466,72 @@ public:
     Rid rid_;
     char* table_name_;
     size_t table_name_size_;
+};
+
+class NewPageLogRecord : public LogRecord {
+public:
+    NewPageLogRecord() {
+        log_type_ = LogType::NEWPAGE;
+        lsn_ = INVALID_LSN;
+        log_tot_len_ = LOG_HEADER_SIZE;
+        log_tid_ = INVALID_TXN_ID;
+        log_node_id_ = INVALID_NODE_ID;
+        prev_lsn_ = INVALID_LSN;
+        table_name_ = nullptr;
+        next_free_page_no_ = -1;
+    }
+    NewPageLogRecord(const std::string& table_name, int page_no) : NewPageLogRecord() {
+        page_no_ = page_no;
+        log_tot_len_ += sizeof(int);
+        table_name_size_ = table_name.length();
+        log_tot_len_ += sizeof(size_t);
+        table_name_ = new char[table_name_size_];
+        memcpy(table_name_, table_name.c_str(), table_name_size_);
+        log_tot_len_ += table_name_size_;
+    }
+    void set_meta(int num_pages, int first_free_page_no) {
+        num_pages_ = num_pages;
+        log_tot_len_ += sizeof(int);
+        first_free_page_no_ = first_free_page_no;
+        log_tot_len_ += sizeof(int);
+    }
+    ~NewPageLogRecord() {
+        if(table_name_ != nullptr)
+            delete[] table_name_;
+    }
+
+    void serialize(char* dest) const override {
+        LogRecord::serialize(dest);
+        int offset = OFFSET_LOG_DATA;
+        memcpy(dest + offset, &page_no_, sizeof(int));
+        offset += sizeof(int);
+        memcpy(dest + offset, &table_name_size_, sizeof(size_t));
+        offset += sizeof(size_t);
+        memcpy(dest + offset, table_name_, table_name_size_);
+        offset += table_name_size_;
+        memcpy(dest + offset, &num_pages_, sizeof(int));
+        offset += sizeof(int);
+        memcpy(dest + offset, &first_free_page_no_, sizeof(int));
+    }
+    void deserialize(const char* src) override {
+        LogRecord::deserialize(src);
+        int offset = OFFSET_LOG_DATA;
+        page_no_ = *reinterpret_cast<const int*>(src + offset);
+        offset += sizeof(int);
+        table_name_size_ = *reinterpret_cast<const size_t*>(src + offset);
+        offset += sizeof(size_t);
+        table_name_ = new char[table_name_size_];
+        memcpy(table_name_, src + offset, table_name_size_);
+        offset += table_name_size_;
+        num_pages_ = *reinterpret_cast<const int*>(src + offset);
+        offset += sizeof(int);
+        first_free_page_no_ = *reinterpret_cast<const int*>(src + offset);
+    }
+
+    char* table_name_;
+    size_t table_name_size_;
+    int page_no_;               // page_no of new page
+    int num_pages_;             // modified value of file_hdr.num_pages
+    int first_free_page_no_;    // modified value of file_hdr.first_free_page_no
+    int next_free_page_no_;
 };
