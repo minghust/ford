@@ -24,7 +24,9 @@ set(SCHEDULER_SRC
 set(STORAGE_SRC
         storage/storage_service.pb.cc
         storage/storage_rpc.cc
+        storage/disk_manager.cc
         )
+        
 set(LOG_SRC
         log/logreplay.cc
         log/logparse.cc

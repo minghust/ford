@@ -7,7 +7,9 @@
 #include "util/debug.h"
 #include "disk_manager.h"
 
-DiskManager::DiskManager() { memset(fd2pageno_, 0, MAX_FD * (sizeof(std::atomic<page_id_t>) / sizeof(char))); }
+DiskManager::DiskManager() { 
+    memset(fd2pageno_, 0, MAX_FD * (sizeof(std::atomic<page_id_t>) / sizeof(char))); 
+}
 
 /**
  * @description: 将数据写入文件的指定磁盘页面中

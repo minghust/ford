@@ -15,7 +15,7 @@ namespace storage_service{
             
         brpc::ClosureGuard done_guard(done);
         
-        log_manager_->add_log_to_buffer(request->log());
+        log_manager_->write_batch_log_to_disk(request->log());
         
         return;
     };

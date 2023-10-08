@@ -1,7 +1,7 @@
 #pragma once
 
 #include "log_record.h"
-#include "disk_manager.h"
+#include "storage/disk_manager.h"
 
 class LogReplay{
 public:

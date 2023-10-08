@@ -24,6 +24,7 @@ using page_id_t = uint32_t;   // page id type
 using batch_id_t = uint64_t;  // batch id type
 #define PAGE_SIZE 4096
 
+const int INVALID_PAGE_ID = -1;                                    // invalid page id
 
 // Memory region ids for server's hash store buffer and undo log buffer
 const mr_id_t SERVER_HASH_BUFF_ID = 97;
