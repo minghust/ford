@@ -3,7 +3,7 @@
 #include <gflags/gflags.h>
 
 #include "storage_service.pb.h"
-#include "log_manager.h"
+#include "log/log_manager.h"
 #include "disk_manager.h"
 
 namespace storage_service{

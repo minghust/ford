@@ -9,7 +9,7 @@
 
 class LogManager {
 public:
-    LogManager(){}
+    LogManager();
     ~LogManager(){}
 
     // lsn_t add_log_to_buffer(std::string log_record);
