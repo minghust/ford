@@ -5,6 +5,7 @@
 #include <fcntl.h>
 
 #include "util/debug.h"
+#include "util/errors.h"
 #include "disk_manager.h"
 
 DiskManager::DiskManager() { 
@@ -43,10 +44,11 @@ void DiskManager::write_page(int fd, page_id_t page_no, const char *offset, int 
 
     lseek(fd, page_no * PAGE_SIZE, SEEK_SET);
     ssize_t bytes_write = write(fd, offset, num_bytes);  // 这里的offset可以是uint_8*类型，也可以是char*类型
-    // if (bytes_write != num_bytes) {
-    //     throw InternalError("DiskManager::write_page Error");
-    // }
-    assert(bytes_write == num_bytes);
+    if (bytes_write != num_bytes) {
+        // throw InternalError("DiskManager::write_page Error");
+        RDMA_LOG(FATAL) << "DiskManager::write_page Error: failed to write complete page data.";
+        throw InternalError("DiskManager::write_page Error");
+    }
 }
 
 /**
@@ -66,16 +68,20 @@ void DiskManager::read_page(int fd, page_id_t page_no, char *offset, int num_byt
     lseek(fd, page_no * PAGE_SIZE, SEEK_SET);
     ssize_t bytes_read = read(fd, offset, num_bytes);
     // 没有成功从buffer偏移处读取指定数字节
-    // if (bytes_read != num_bytes) {
-    //     throw InternalError("DiskManager::read_page Error");
-    // }
-    assert(bytes_read == num_bytes);
+    if (bytes_read != num_bytes) {
+        // throw InternalError("DiskManager::read_page Error");
+        RDMA_LOG(FATAL) << "DiskManager::read_page Error: failed to read complete page data.";
+        throw InternalError("DiskManager::read_page Error");
+    }
 }
 
 void DiskManager::update_value(int fd, page_id_t page_no, int slot_offset, char* value, int value_size) {
     lseek(fd, page_no * PAGE_SIZE + slot_offset, SEEK_SET);
     ssize_t bytes_write = write(fd, value, value_size);
-    assert(bytes_write == value_size);
+    if(bytes_write != value_size) {
+        RDMA_LOG(FATAL) << "DiskManager::update_value Error: failed to write complete data.";
+        throw InternalError("DiskManager::update_value Error");
+    }
 }
 
 /**
@@ -101,15 +107,16 @@ void DiskManager::create_dir(const std::string &path) {
     // Create a subdirectory
     std::string cmd = "mkdir " + path;
     if (system(cmd.c_str()) < 0) {  // 创建一个名为path的目录
-        // throw UnixError();
-        // RDMA_LOG()
+        RDMA_LOG(FATAL) << "DiskManager::create_dir Error: failed to create the directory " << "\"" << path << "\"";
+        throw UnixError();
     }
 }
 
 void DiskManager::destroy_dir(const std::string &path) {
     std::string cmd = "rm -r " + path;
     if (system(cmd.c_str()) < 0) {
-        // throw UnixError();
+        RDMA_LOG(FATAL) << "DiskManager::destroy_dir Error: failed to delete the directory" << "\"" << path << "\"";
+        throw UnixError();
     }
 }
 
@@ -137,17 +144,14 @@ void DiskManager::create_file(const std::string &path) {
     // 注意不能重复创建相同文件
 
     if (is_file(path)) {
-        // throw FileExistsError(path);
-        assert(0);
+        throw FileExistsError(path);
     }
     int fd = open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR);
     if (fd < 0) {
-        // throw UnixError();
-        assert(0);
+        throw UnixError();
     }
     if (close(fd) != 0) {
-        // throw UnixError();
-        assert(0);
+        throw UnixError();
     }
 }
 
@@ -161,18 +165,16 @@ void DiskManager::destroy_file(const std::string &path) {
     // 注意不能删除未关闭的文件
     
     if (!is_file(path)) {
-        // throw FileNotFoundError(path);
-        assert(0);
+        throw FileNotFoundError(path);
     }
+    assert(!is_file(path));
     // If file is open, cannot destroy file
     if (path2fd_.count(path)) {
-        // throw FileNotClosedError(path);
-        assert(0);
+        throw FileNotClosedError(path);
     }
     // Remove file from disk
     if (unlink(path.c_str()) != 0) {
-        // throw UnixError();
-        assert(0);
+        throw UnixError();
     }
 }
 
@@ -187,20 +189,18 @@ int DiskManager::open_file(const std::string &path) {
     // 调用open()函数，使用O_RDWR模式
     // 注意不能重复打开相同文件，并且需要更新文件打开列表
 
-    // if (!is_file(path)) {
-    //     throw FileNotFoundError(path);
-    // }
-    assert(is_file(path));
+    if (!is_file(path)) {
+        throw FileNotFoundError(path);
+    }
+    assert(!is_file(path));
     if (path2fd_.count(path)) {
         // File is already open
-        // throw FileNotClosedError(path);
-        assert(0);
+        throw FileNotClosedError(path);
     }
     // Open file and return the file descriptor
     int fd = open(path.c_str(), O_RDWR);
     if (fd < 0) {
-        // throw UnixError();
-        assert(0);
+        throw UnixError();
     }
     // Memorize the opened unix file descriptor
     path2fd_[path] = fd;
@@ -218,15 +218,13 @@ void DiskManager::close_file(int fd) {
     // 注意不能关闭未打开的文件，并且需要更新文件打开列表
     
     if (!fd2path_.count(fd)) {
-        // throw FileNotOpenError(fd);
-        assert(0);
+        throw FileNotOpenError(fd);
     }
     std::string filename = fd2path_[fd];
     path2fd_.erase(filename);
     fd2path_.erase(fd);
     if (close(fd) != 0) {
-        // throw UnixError();
-        assert(0);
+        throw UnixError();
     }
 }
 
@@ -249,8 +247,7 @@ int DiskManager::get_file_size(const std::string &file_name) {
  */
 std::string DiskManager::get_file_name(int fd) {
     if (!fd2path_.count(fd)) {
-        // throw FileNotOpenError(fd);
-        assert(0);
+        throw FileNotOpenError(fd);
     }
     return fd2path_[fd];
 }
