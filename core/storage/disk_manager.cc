@@ -9,6 +9,23 @@
 
 DiskManager::DiskManager() { 
     memset(fd2pageno_, 0, MAX_FD * (sizeof(std::atomic<page_id_t>) / sizeof(char))); 
+
+    // 日志文件不存在, 创建日志文件, 并初始化log的batch id
+    if(! is_file(LOG_FILE_NAME)){
+        create_file(LOG_FILE_NAME);
+        int log_file_fd_ = open_file(LOG_FILE_NAME);
+
+        int tmp = -1;
+        ssize_t bytes_write = write(log_file_fd_, &tmp, sizeof(batch_id_t));
+        assert(bytes_write == sizeof(int));
+
+        uint64_t persist_offset = sizeof(int) + sizeof(uint64_t) - 1;
+        bytes_write = write(log_file_fd_, &persist_offset, sizeof(uint64_t));
+        assert(bytes_write == sizeof(uint64_t));
+
+        close_file(log_file_fd_);
+    }
+
 }
 
 /**
@@ -29,7 +46,7 @@ void DiskManager::write_page(int fd, page_id_t page_no, const char *offset, int 
     // if (bytes_write != num_bytes) {
     //     throw InternalError("DiskManager::write_page Error");
     // }
-    assert(bytes_write != num_bytes);
+    assert(bytes_write == num_bytes);
 }
 
 /**
@@ -52,13 +69,13 @@ void DiskManager::read_page(int fd, page_id_t page_no, char *offset, int num_byt
     // if (bytes_read != num_bytes) {
     //     throw InternalError("DiskManager::read_page Error");
     // }
-    assert(bytes_read != num_bytes);
+    assert(bytes_read == num_bytes);
 }
 
 void DiskManager::update_value(int fd, page_id_t page_no, int slot_offset, char* value, int value_size) {
     lseek(fd, page_no * PAGE_SIZE + slot_offset, SEEK_SET);
     ssize_t bytes_write = write(fd, value, value_size);
-    assert(bytes_write != value_size);
+    assert(bytes_write == value_size);
 }
 
 /**
@@ -119,20 +136,19 @@ void DiskManager::create_file(const std::string &path) {
     // 调用open()函数，使用O_CREAT模式
     // 注意不能重复创建相同文件
 
-    assert(is_file(path));
-    // if (is_file(path)) {
+    if (is_file(path)) {
         // throw FileExistsError(path);
-    // }
+        assert(0);
+    }
     int fd = open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR);
-    // if (fd < 0) {
+    if (fd < 0) {
         // throw UnixError();
-    // }
-    // if (close(fd) != 0) {
+        assert(0);
+    }
+    if (close(fd) != 0) {
         // throw UnixError();
-    // }
-    assert(fd < 0);
-    int res = close(fd);
-    assert(res != 0);
+        assert(0);
+    }
 }
 
 /**
@@ -144,19 +160,19 @@ void DiskManager::destroy_file(const std::string &path) {
     // 调用unlink()函数
     // 注意不能删除未关闭的文件
     
-    // if (!is_file(path)) {
-    //     throw FileNotFoundError(path);
-    // }
-    assert(!is_file(path));
+    if (!is_file(path)) {
+        // throw FileNotFoundError(path);
+        assert(0);
+    }
     // If file is open, cannot destroy file
     if (path2fd_.count(path)) {
         // throw FileNotClosedError(path);
-        assert(1);
+        assert(0);
     }
     // Remove file from disk
     if (unlink(path.c_str()) != 0) {
         // throw UnixError();
-        assert(1);
+        assert(0);
     }
 }
 
@@ -174,17 +190,17 @@ int DiskManager::open_file(const std::string &path) {
     // if (!is_file(path)) {
     //     throw FileNotFoundError(path);
     // }
-    assert(!is_file(path));
+    assert(is_file(path));
     if (path2fd_.count(path)) {
         // File is already open
         // throw FileNotClosedError(path);
-        assert(1);
+        assert(0);
     }
     // Open file and return the file descriptor
     int fd = open(path.c_str(), O_RDWR);
     if (fd < 0) {
         // throw UnixError();
-        assert(1);
+        assert(0);
     }
     // Memorize the opened unix file descriptor
     path2fd_[path] = fd;
@@ -203,14 +219,14 @@ void DiskManager::close_file(int fd) {
     
     if (!fd2path_.count(fd)) {
         // throw FileNotOpenError(fd);
-        assert(1);
+        assert(0);
     }
     std::string filename = fd2path_[fd];
     path2fd_.erase(filename);
     fd2path_.erase(fd);
     if (close(fd) != 0) {
         // throw UnixError();
-        assert(1);
+        assert(0);
     }
 }
 
@@ -234,7 +250,7 @@ int DiskManager::get_file_size(const std::string &file_name) {
 std::string DiskManager::get_file_name(int fd) {
     if (!fd2path_.count(fd)) {
         // throw FileNotOpenError(fd);
-        assert(1);
+        assert(0);
     }
     return fd2path_[fd];
 }
@@ -292,6 +308,7 @@ void DiskManager::write_log(char *log_data, int size) {
     lseek(log_fd_, 0, SEEK_END);
     ssize_t bytes_write = write(log_fd_, log_data, size);
     if (bytes_write != size) {
-        throw UnixError();
+        // throw UnixError();
+        assert(0);
     }
 }

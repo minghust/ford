@@ -44,3 +44,78 @@ void LogReplay::apply_sigle_log(LogRecord* log) {
         break;
     }
 }
+
+void LogReplay::replayFun(){
+    int offset = persist_off_-1;
+    int read_bytes;
+    while (!replay_stop) {
+        int read_size = std::min(max_replay_off_ - offset, (size_t)LOG_REPLAY_BUFFER_SIZE);
+        if(read_size == 0){
+            // don't need to replay
+            std::this_thread::sleep_for(std::chrono::milliseconds(50)); //sleep 50 ms
+            break;
+        }
+        read_bytes = disk_manager_->read_log(buffer_.buffer_, read_size, offset);
+        buffer_.offset_ = read_bytes - 1;
+        int inner_offset = 0;
+        int replay_batch_id;
+        while (inner_offset <= buffer_.offset_ ) {
+
+            if (inner_offset + OFFSET_LOG_TOT_LEN + sizeof(uint32_t) > LOG_REPLAY_BUFFER_SIZE) break;
+            uint32_t size = *reinterpret_cast<const uint32_t *>(buffer_.buffer_ + inner_offset + OFFSET_LOG_TOT_LEN);
+            if (size == 0 || size + inner_offset > LOG_REPLAY_BUFFER_SIZE) {
+                break;
+            }
+            
+            LogRecord *record;
+            LogType type = *reinterpret_cast<const LogType *>(buffer_.buffer_ + inner_offset);
+            switch (type)
+            {
+            case LogType::BEGIN:
+                record = new BeginLogRecord();
+                break;
+            case LogType::ABORT:
+                record = new AbortLogRecord();
+                break;
+            case LogType::COMMIT:
+                record = new CommitLogRecord();
+                break;
+            case LogType::INSERT:
+                record = new InsertLogRecord();
+                break;
+            case LogType::UPDATE:
+                record = new UpdateLogRecord();
+                break;
+            case LogType::DELETE:
+                record = new DeleteLogRecord();
+                break;
+            case LogType::NEWPAGE:
+                record = new NewPageLogRecord();
+            default:
+                assert(0);
+                break;
+            }
+            record->deserialize(buffer_.buffer_ + inner_offset);
+            // redo the log if necessary
+            apply_sigle_log(record);
+            replay_batch_id = record->log_batch_id_;
+            delete record;
+            inner_offset += size;
+        }
+        offset += inner_offset;
+
+        persist_batch_id_ = replay_batch_id;
+        persist_off_ = offset;
+        // 持久化persist_batch_id和persist_off
+        lseek(log_write_head_fd_, 0, SEEK_SET);
+        ssize_t result = write(log_write_head_fd_, &persist_batch_id_, sizeof(batch_id_t));
+        if (result == -1) {
+            std::cerr << "bad write\n";
+        }
+
+        result = write(log_write_head_fd_, &persist_off_, sizeof(uint64_t));
+        if (result == -1) {
+            std::cerr << "bad write\n";
+        }
+    }
+}

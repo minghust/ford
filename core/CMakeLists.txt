@@ -29,7 +29,7 @@ set(STORAGE_SRC
         
 set(LOG_SRC
         log/logreplay.cc
-        log/logparse.cc
+        # log/logparse.cc
         log/log_manager.cc)
 
 add_library(ford STATIC
