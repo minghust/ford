@@ -16,11 +16,11 @@ DiskManager::DiskManager() {
         create_file(LOG_FILE_NAME);
         int log_file_fd_ = open_file(LOG_FILE_NAME);
 
-        int tmp = -1;
+        batch_id_t tmp = -1;
         ssize_t bytes_write = write(log_file_fd_, &tmp, sizeof(batch_id_t));
-        assert(bytes_write == sizeof(int));
+        assert(bytes_write == sizeof(batch_id_t));
 
-        uint64_t persist_offset = sizeof(int) + sizeof(uint64_t) - 1;
+        uint64_t persist_offset = sizeof(batch_id_t) + sizeof(uint64_t) - 1;
         bytes_write = write(log_file_fd_, &persist_offset, sizeof(uint64_t));
         assert(bytes_write == sizeof(uint64_t));
 
@@ -167,7 +167,6 @@ void DiskManager::destroy_file(const std::string &path) {
     if (!is_file(path)) {
         throw FileNotFoundError(path);
     }
-    assert(!is_file(path));
     // If file is open, cannot destroy file
     if (path2fd_.count(path)) {
         throw FileNotClosedError(path);
@@ -192,7 +191,6 @@ int DiskManager::open_file(const std::string &path) {
     if (!is_file(path)) {
         throw FileNotFoundError(path);
     }
-    assert(!is_file(path));
     if (path2fd_.count(path)) {
         // File is already open
         throw FileNotClosedError(path);
@@ -262,50 +260,4 @@ int DiskManager::get_file_fd(const std::string &file_name) {
         return open_file(file_name);
     }
     return path2fd_[file_name];
-}
-
-
-/**
- * @description:  读取日志文件内容
- * @return {int} 返回读取的数据量，若为-1说明读取数据的起始位置超过了文件大小
- * @param {char} *log_data 读取内容到log_data中
- * @param {int} size 读取的数据量大小
- * @param {int} offset 读取的内容在文件中的位置
- */
-int DiskManager::read_log(char *log_data, int size, int offset) {
-    // read log file from the previous end
-    if (log_fd_ == -1) {
-        log_fd_ = open_file(LOG_FILE_NAME);
-    }
-    int file_size = get_file_size(LOG_FILE_NAME);
-    if (offset > file_size) {
-        return -1;
-    }
-
-    size = std::min(size, file_size - offset);
-    if(size == 0) return 0;
-    lseek(log_fd_, offset, SEEK_SET);
-    ssize_t bytes_read = read(log_fd_, log_data, size);
-    assert(bytes_read == size);
-    return bytes_read;
-}
-
-
-/**
- * @description: 写日志内容
- * @param {char} *log_data 要写入的日志内容
- * @param {int} size 要写入的内容大小
- */
-void DiskManager::write_log(char *log_data, int size) {
-    if (log_fd_ == -1) {
-        log_fd_ = open_file(LOG_FILE_NAME);
-    }
-
-    // write from the file_end
-    lseek(log_fd_, 0, SEEK_END);
-    ssize_t bytes_write = write(log_fd_, log_data, size);
-    if (bytes_write != size) {
-        // throw UnixError();
-        assert(0);
-    }
 }

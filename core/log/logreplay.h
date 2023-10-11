@@ -52,13 +52,14 @@ public:
         close(log_replay_fd_);
     };
 
+    int  read_log(char *log_data, int size, int offset);
     void apply_sigle_log(LogRecord* log_record);
-    
+    void add_max_replay_off_(int off) {max_replay_off_ += off;}
     void replayFun();
 
 private:
-    int log_replay_fd_;
-    int log_write_head_fd_;
+    int log_replay_fd_; // 重放log文件fd
+    int log_write_head_fd_; // 写文件头fd, 减少lseek次数
     size_t max_replay_off_;
     batch_id_t persist_batch_id_;
     size_t persist_off_;

@@ -45,8 +45,31 @@ void LogReplay::apply_sigle_log(LogRecord* log) {
     }
 }
 
+/**
+ * @description:  读取日志文件内容
+ * @return {int} 返回读取的数据量，若为-1说明读取数据的起始位置超过了文件大小
+ * @param {char} *log_data 读取内容到log_data中
+ * @param {int} size 读取的数据量大小
+ * @param {int} offset 读取的内容在文件中的位置
+ */
+int LogReplay::read_log(char *log_data, int size, int offset) {
+    // read log file from the previous end
+    assert (log_replay_fd_ != -1);
+    int file_size = disk_manager_->get_file_size(LOG_FILE_NAME);
+    if (offset > file_size) {
+        return -1;
+    }
+
+    size = std::min(size, file_size - offset);
+    if(size == 0) return 0;
+    lseek(log_replay_fd_, offset, SEEK_SET);
+    ssize_t bytes_read = read(log_replay_fd_, log_data, size);
+    assert(bytes_read == size);
+    return bytes_read;
+}
+
 void LogReplay::replayFun(){
-    int offset = persist_off_-1;
+    int offset = persist_off_;
     int read_bytes;
     while (!replay_stop) {
         int read_size = std::min(max_replay_off_ - offset, (size_t)LOG_REPLAY_BUFFER_SIZE);
@@ -55,7 +78,7 @@ void LogReplay::replayFun(){
             std::this_thread::sleep_for(std::chrono::milliseconds(50)); //sleep 50 ms
             break;
         }
-        read_bytes = disk_manager_->read_log(buffer_.buffer_, read_size, offset);
+        read_bytes = read_log(buffer_.buffer_, read_size, offset);
         buffer_.offset_ = read_bytes - 1;
         int inner_offset = 0;
         int replay_batch_id;
