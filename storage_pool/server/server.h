@@ -22,7 +22,7 @@ public:
         
         disk_manager_(disk_manager), log_manager_(log_manager){
             
-            std::thread rpc_thread([&]{
+        // std::thread rpc_thread([&]{
                     
             //启动事务brpc server
             brpc::Server server;
@@ -44,7 +44,7 @@ public:
             }
 
             server.RunUntilAskedToQuit();
-        });
+        // });
 
     }
 

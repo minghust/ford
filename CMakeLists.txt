@@ -5,6 +5,12 @@ cmake_minimum_required(VERSION 3.3)
 
 project(FORD)
 
+execute_process(
+    COMMAND bash -c "find ${PROJECT_SOURCE_DIR}/ -type d -regex \".*output/include$\" | head -n1 | xargs dirname | tr -d '\n'"
+    OUTPUT_VARIABLE OUTPUT_PATH
+)
+set(CMAKE_PREFIX_PATH ${OUTPUT_PATH})
+
 set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-result -fPIC")
@@ -48,6 +54,12 @@ include_directories(${LEVELDB_INCLUDE_PATH})
 
 find_package(OpenSSL)
 include_directories(${OPENSSL_INCLUDE_DIR})
+
+find_path(RDMA_INCLUDE_PATH NAMES infiniband/verbs.h)
+find_library(RDMA_LIB NAMES ibverbs)
+if ((NOT RDMA_INCLUDE_PATH) OR (NOT RDMA_LIB))
+    message(FATAL_ERROR "Fail to find ibverbs")
+endif()
 
 set(DYNAMIC_LIB
     ${CMAKE_THREAD_LIBS_INIT}
