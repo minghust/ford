@@ -21,6 +21,7 @@ using version_t = uint64_t;   // Version type, used in version checking
 using lock_t = uint64_t;      // Lock type, used in remote locking
 using lsn_t = uint64_t;       // log sequence number, used for storage_node log storage
 using page_id_t = uint32_t;   // page id type
+using frame_id_t = uint32_t;  // frame id type
 using batch_id_t = uint64_t;  // batch id type
 #define PAGE_SIZE 4096
 
@@ -62,3 +63,18 @@ const uint64_t MEM_STORE_META_END = 0xE0FF0E0F;
 #define INVALID_TXN_ID -1
 #define INVALID_NODE_ID -1
 #define INVALID_BATCH_ID -1
+
+#define PAGE_NO_RM_FILE_HDR 0
+#define OFFSET_PAGE_HDR 0
+#define OFFSET_NUM_PAGES 4
+#define OFFSET_FIRST_FREE_PAGE_NO 12
+#define OFFSET_NUM_RECORDS 4
+#define OFFSET_NEXT_FREE_PAGE_NO 0
+#define OFFSET_BITMAP 8
+
+#define REPLACER_TYPE "LRU"
+
+#define RM_MAX_RECORD_SIZE 512
+#define RM_FIRST_RECORD_PAGE 1
+#define RM_FILE_HDR_PAGE 0
+#define RM_NO_PAGE -1

@@ -4,15 +4,8 @@
 
 #include "base/common.h"
 
-#define PAGE_NO_RM_FILE_HDR 0
-#define OFFSET_PAGE_HDR 0
-#define OFFSET_NUM_PAGES 4
-#define OFFSET_FIRST_FREE_PAGE_NO 12
-#define OFFSET_NUM_RECORDS 4
-#define OFFSET_NEXT_FREE_PAGE_NO 0
-#define OFFSET_BITMAP 8
-
 class RmFileHdr {
+public:
     int record_size_;
     int num_pages_;
     int num_records_per_page_;
@@ -21,6 +14,7 @@ class RmFileHdr {
 };
 
 class RmPageHdr {
+public:
     int next_free_page_no_;
     int num_records_;
 };
@@ -40,6 +34,21 @@ public:
 
     RmRecord() = default;
 
+    RmRecord(itemkey_t key, size_t value_size, char* value) {
+        key_ = key;
+        value_size_ = value_size;
+        value_ = new char[value_size];
+        memcpy(value_, value, value_size);
+        allocated_ = true;
+    }
+
+    RmRecord(itemkey_t key, size_t value_size) {
+        key_ = key;
+        value_size_ = value_size;
+        value_ = new char[value_size];
+        allocated_ = true;
+    }
+
     RmRecord(const RmRecord& other) {
         key_ = other.key_;
         value_size_ = other.value_size_;
@@ -57,14 +66,26 @@ public:
         return *this;
     }
 
-    void Deserialize(const char* data) {
+    void Serialize(char* dest, int& offset) const {
+        memcpy(dest, &key_, sizeof(itemkey_t));
+        offset += sizeof(itemkey_t);
+        memcpy(dest + sizeof(itemkey_t), &value_size_, sizeof(size_t));
+        offset += sizeof(size_t);
+        memcpy(dest + sizeof(itemkey_t) + sizeof(size_t), value_, value_size_);
+        offset += value_size_;
+    }
+
+    void Deserialize(const char* data, int& offset) {
         key_ = *reinterpret_cast<const itemkey_t*>(data);
-        value_size_ = *reinterpret_cast<const int*>(data);
+        offset += sizeof(itemkey_t);
+        value_size_ = *reinterpret_cast<const size_t*>(data + sizeof(itemkey_t));
+        offset += sizeof(size_t);
         if(allocated_) {
             delete[] value_;
         }
         value_ = new char[value_size_];
-        memcpy(value_, data + sizeof(int) + sizeof(itemkey_t), value_size_);
+        memcpy(value_, data + sizeof(size_t) + sizeof(itemkey_t), value_size_);
+        offset += value_size_;
     }
 
     ~RmRecord() {

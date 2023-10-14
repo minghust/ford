@@ -4,7 +4,7 @@
 #include <string>
 
 #include "base/common.h"
-#include "storage/record.h"
+#include "record/record.h"
 
 const int OFFSET_BATCH_ID = 0;
 // the offset of log_type_ in log header
@@ -193,7 +193,8 @@ public:
         log_node_id_ = node_id;
         insert_value_ = insert_value;
         rid_ = rid;
-        log_tot_len_ += sizeof(int);
+        log_tot_len_ += sizeof(itemkey_t);
+        log_tot_len_ += sizeof(size_t);
         log_tot_len_ += insert_value_.value_size_;
         log_tot_len_ += sizeof(Rid);
         table_name_size_ = table_name.length();
@@ -221,10 +222,7 @@ public:
     void serialize(char* dest) const override {
         LogRecord::serialize(dest);
         int offset = OFFSET_LOG_DATA;
-        memcpy(dest + offset, &insert_value_.value_size_, sizeof(int));
-        offset += sizeof(int);
-        memcpy(dest + offset, insert_value_.value_, insert_value_.value_size_);
-        offset += insert_value_.value_size_;
+        insert_value_.Serialize(dest + offset, offset);
         memcpy(dest + offset, &rid_, sizeof(Rid));
         offset += sizeof(Rid);
         memcpy(dest + offset, &table_name_size_, sizeof(size_t));
@@ -241,8 +239,8 @@ public:
     }
     void deserialize(const char* src) override {
         LogRecord::deserialize(src);  
-        insert_value_.Deserialize(src + OFFSET_LOG_DATA);
-        int offset = OFFSET_LOG_DATA + insert_value_.value_size_ + sizeof(int);
+        int offset = OFFSET_LOG_DATA;
+        insert_value_.Deserialize(src + OFFSET_LOG_DATA, offset);
         rid_ = *reinterpret_cast<const Rid*>(src + offset);
         offset += sizeof(Rid);
         table_name_size_ = *reinterpret_cast<const size_t*>(src + offset);
@@ -397,7 +395,7 @@ public:
         prev_lsn_ = INVALID_LSN;
         table_name_ = nullptr;
     }
-    UpdateLogRecord(batch_id_t batch_id, node_id_t node_id, tx_id_t txn_id, RmRecord& new_value, Rid& rid, std::string table_name)
+    UpdateLogRecord(batch_id_t batch_id, node_id_t node_id, tx_id_t txn_id, RmRecord& new_value,const Rid& rid, std::string table_name)
         : UpdateLogRecord() {
         log_batch_id_ = batch_id;
         log_tid_ = txn_id;
@@ -426,10 +424,7 @@ public:
         // offset += sizeof(int);
         // memcpy(dest + offset, old_value_.value_, old_value_.value_size_);
         // offset += old_value_.value_size_;
-        memcpy(dest + offset, &new_value_.value_size_, sizeof(int));
-        offset += sizeof(int);
-        memcpy(dest + offset, new_value_.value_, new_value_.value_size_);
-        offset += new_value_.value_size_;
+        new_value_.Serialize(dest, offset);
         memcpy(dest + offset, &rid_, sizeof(Rid));
         offset += sizeof(Rid);
         memcpy(dest + offset, &table_name_size_, sizeof(size_t));
@@ -442,9 +437,8 @@ public:
         // old_value_.Deserialize(src + OFFSET_LOG_DATA);
         // printf("finish deserialze old value\n");
         int offset = OFFSET_LOG_DATA;
-        new_value_.Deserialize(src + offset);
+        new_value_.Deserialize(src + offset, offset);
         // printf("finish deserialze new value\n");
-        offset += sizeof(int) + new_value_.value_size_;
         rid_ = *reinterpret_cast<const Rid*>(src + offset);
         // printf("finish deserialze rid\n");
         offset += sizeof(Rid);
@@ -471,6 +465,7 @@ public:
 class NewPageLogRecord : public LogRecord {
 public:
     NewPageLogRecord() {
+        log_batch_id_ = INVALID_BATCH_ID;
         log_type_ = LogType::NEWPAGE;
         lsn_ = INVALID_LSN;
         log_tot_len_ = LOG_HEADER_SIZE;
@@ -480,7 +475,10 @@ public:
         table_name_ = nullptr;
         next_free_page_no_ = -1;
     }
-    NewPageLogRecord(const std::string& table_name, int page_no) : NewPageLogRecord() {
+    NewPageLogRecord(batch_id_t batch_id, node_id_t node_id, tx_id_t txn_id, const std::string& table_name, int page_no) : NewPageLogRecord() {
+        log_batch_id_ = batch_id;
+        log_node_id_ = node_id;
+        log_tid_ = txn_id;
         page_no_ = page_no;
         log_tot_len_ += sizeof(int);
         table_name_size_ = table_name.length();

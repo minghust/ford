@@ -13,7 +13,8 @@ void LogReplay::apply_sigle_log(LogRecord* log) {
             disk_manager_->update_value(fd, PAGE_NO_RM_FILE_HDR, OFFSET_FIRST_FREE_PAGE_NO, (char*)(&insert_log->first_free_page_no_), sizeof(int));
             disk_manager_->update_value(fd, insert_log->rid_.page_no_, OFFSET_NUM_RECORDS, (char*)(&insert_log->num_records_), sizeof(int));
             disk_manager_->update_value(fd, insert_log->rid_.page_no_, insert_log->bucket_offset_, &insert_log->bucket_value_, sizeof(char));
-            disk_manager_->update_value(fd, insert_log->rid_.page_no_, insert_log->rid_.slot_offset_, insert_log->insert_value_.value_, insert_log->insert_value_.value_size_ * sizeof(char));
+            disk_manager_->update_value(fd, insert_log->rid_.page_no_, insert_log->rid_.slot_offset_, (char*)&insert_log->insert_value_.key_, sizeof(itemkey_t));
+            disk_manager_->update_value(fd, insert_log->rid_.page_no_, insert_log->rid_.slot_offset_ + sizeof(itemkey_t), insert_log->insert_value_.value_, insert_log->insert_value_.value_size_ * sizeof(char));
         } break;
         case LogType::DELETE: {
             DeleteLogRecord* delete_log = dynamic_cast<DeleteLogRecord*>(log);
@@ -27,7 +28,7 @@ void LogReplay::apply_sigle_log(LogRecord* log) {
             UpdateLogRecord* update_log = dynamic_cast<UpdateLogRecord*>(log);
             std::string table_name(update_log->table_name_, update_log->table_name_ + update_log->table_name_size_);
             int fd = disk_manager_->get_file_fd(table_name);
-            disk_manager_->update_value(fd, update_log->rid_.page_no_, update_log->rid_.slot_offset_, update_log->new_value_.value_, update_log->new_value_.value_size_ * sizeof(char));
+            disk_manager_->update_value(fd, update_log->rid_.page_no_, update_log->rid_.slot_offset_ + sizeof(itemkey_t), update_log->new_value_.value_, update_log->new_value_.value_size_ * sizeof(char));
         }
         case LogType::NEWPAGE: {
             NewPageLogRecord* new_page_log = dynamic_cast<NewPageLogRecord*>(log);
