@@ -23,7 +23,9 @@ using lsn_t = uint64_t;       // log sequence number, used for storage_node log 
 using page_id_t = uint32_t;   // page id type
 using frame_id_t = uint32_t;  // frame id type
 using batch_id_t = uint64_t;  // batch id type
+
 #define PAGE_SIZE 4096
+#define BUFFER_POOL_SIZE 65536
 
 #define LOG_FILE_NAME "LOG_FILE"
 const int INVALID_PAGE_ID = -1;                                    // invalid page id

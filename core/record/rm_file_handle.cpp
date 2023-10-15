@@ -30,7 +30,7 @@ std::unique_ptr<RmRecord> RmFileHandle::get_record(const Rid& rid, BatchTxn* txn
     memcpy(record->data, slot + sizeof(itemkey_t), file_hdr_.record_size_);
     record->size = file_hdr_.record_size_;
 
-    // buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), false);
+    buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), false);
     // return record;
 
     return record;
@@ -73,8 +73,8 @@ Rid RmFileHandle::insert_record(itemkey_t key, char* buf, BatchTxn* txn) {
     memcpy(slot, &key, sizeof(itemkey_t));
     memcpy(slot + sizeof(itemkey_t), buf, file_hdr_.record_size_);
 
-    // buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), true);
-    // // BufferPoolManager::mark_dirty(page_handle.page);
+    buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), true);
+    BufferPoolManager::mark_dirty(page_handle.page);
 
     // // record a insert operation into the transaction
     // // WriteRecord * write_record = new WriteRecord(WType::INSERT_TUPLE, this, rid);
@@ -120,8 +120,8 @@ void RmFileHandle::delete_record(const Rid& rid, BatchTxn* txn) {
     Bitmap::reset(page_handle.bitmap, slot_no);
     page_handle.page_hdr->num_records_--;  // NOTE THIS
 
-    // buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), true);
-    // BufferPoolManager::mark_dirty(page_handle.page);
+    buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), true);
+    BufferPoolManager::mark_dirty(page_handle.page);
 
     // record a delete operation into the transaction
     // WriteRecord * write_record = new WriteRecord(WType::DELETE_TUPLE, this, delete_record);
@@ -159,8 +159,8 @@ void RmFileHandle::update_record(const Rid& rid, char* buf, BatchTxn* txn) {
     char *slot = page_handle.get_slot(rid.slot_offset_);
     memcpy(slot + sizeof(itemkey_t), buf, file_hdr_.record_size_);
 
-    // buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), true);
-    // BufferPoolManager::mark_dirty(page_handle.page);
+    buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), true);
+    BufferPoolManager::mark_dirty(page_handle.page);
 
     // record a update operation into the transaction
     // WriteRecord * write_record = new WriteRecord(WType::UPDATE_TUPLE, this, rid, update_record);

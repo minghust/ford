@@ -15,4 +15,8 @@ public:
 
     std::deque<LogRecord*> logs;
 
+    std::string get_log_string(){
+        
+    }
+
 };
