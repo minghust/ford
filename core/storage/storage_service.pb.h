@@ -457,16 +457,21 @@ class GetPageRequest_PageID final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kFdFieldNumber = 1,
+    kTableNameFieldNumber = 1,
     kPageNoFieldNumber = 2,
   };
-  // sint32 fd = 1;
-  void clear_fd();
-  int32_t fd() const;
-  void set_fd(int32_t value);
+  // string table_name = 1;
+  void clear_table_name();
+  const std::string& table_name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_table_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_table_name();
+  PROTOBUF_NODISCARD std::string* release_table_name();
+  void set_allocated_table_name(std::string* table_name);
   private:
-  int32_t _internal_fd() const;
-  void _internal_set_fd(int32_t value);
+  const std::string& _internal_table_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_table_name(const std::string& value);
+  std::string* _internal_mutable_table_name();
   public:
 
   // sint32 page_no = 2;
@@ -485,7 +490,7 @@ class GetPageRequest_PageID final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int32_t fd_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr table_name_;
   int32_t page_no_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_storage_5fservice_2eproto;
@@ -614,6 +619,7 @@ class GetPageRequest final :
 
   enum : int {
     kPageIdFieldNumber = 1,
+    kRequireBatchIdFieldNumber = 2,
   };
   // .storage_service.GetPageRequest.PageID page_id = 1;
   bool has_page_id() const;
@@ -633,6 +639,15 @@ class GetPageRequest final :
       ::storage_service::GetPageRequest_PageID* page_id);
   ::storage_service::GetPageRequest_PageID* unsafe_arena_release_page_id();
 
+  // sint32 require_batch_id = 2;
+  void clear_require_batch_id();
+  int32_t require_batch_id() const;
+  void set_require_batch_id(int32_t value);
+  private:
+  int32_t _internal_require_batch_id() const;
+  void _internal_set_require_batch_id(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:storage_service.GetPageRequest)
  private:
   class _Internal;
@@ -641,6 +656,7 @@ class GetPageRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::storage_service::GetPageRequest_PageID* page_id_;
+  int32_t require_batch_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_storage_5fservice_2eproto;
 };
@@ -928,24 +944,54 @@ inline void LogWriteRequest::set_allocated_log(std::string* log) {
 
 // GetPageRequest_PageID
 
-// sint32 fd = 1;
-inline void GetPageRequest_PageID::clear_fd() {
-  fd_ = 0;
+// string table_name = 1;
+inline void GetPageRequest_PageID::clear_table_name() {
+  table_name_.ClearToEmpty();
 }
-inline int32_t GetPageRequest_PageID::_internal_fd() const {
-  return fd_;
+inline const std::string& GetPageRequest_PageID::table_name() const {
+  // @@protoc_insertion_point(field_get:storage_service.GetPageRequest.PageID.table_name)
+  return _internal_table_name();
 }
-inline int32_t GetPageRequest_PageID::fd() const {
-  // @@protoc_insertion_point(field_get:storage_service.GetPageRequest.PageID.fd)
-  return _internal_fd();
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GetPageRequest_PageID::set_table_name(ArgT0&& arg0, ArgT... args) {
+ 
+ table_name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:storage_service.GetPageRequest.PageID.table_name)
 }
-inline void GetPageRequest_PageID::_internal_set_fd(int32_t value) {
+inline std::string* GetPageRequest_PageID::mutable_table_name() {
+  std::string* _s = _internal_mutable_table_name();
+  // @@protoc_insertion_point(field_mutable:storage_service.GetPageRequest.PageID.table_name)
+  return _s;
+}
+inline const std::string& GetPageRequest_PageID::_internal_table_name() const {
+  return table_name_.Get();
+}
+inline void GetPageRequest_PageID::_internal_set_table_name(const std::string& value) {
   
-  fd_ = value;
+  table_name_.Set(value, GetArenaForAllocation());
 }
-inline void GetPageRequest_PageID::set_fd(int32_t value) {
-  _internal_set_fd(value);
-  // @@protoc_insertion_point(field_set:storage_service.GetPageRequest.PageID.fd)
+inline std::string* GetPageRequest_PageID::_internal_mutable_table_name() {
+  
+  return table_name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* GetPageRequest_PageID::release_table_name() {
+  // @@protoc_insertion_point(field_release:storage_service.GetPageRequest.PageID.table_name)
+  return table_name_.Release();
+}
+inline void GetPageRequest_PageID::set_allocated_table_name(std::string* table_name) {
+  if (table_name != nullptr) {
+    
+  } else {
+    
+  }
+  table_name_.SetAllocated(table_name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (table_name_.IsDefault()) {
+    table_name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:storage_service.GetPageRequest.PageID.table_name)
 }
 
 // sint32 page_no = 2;
@@ -1060,6 +1106,26 @@ inline void GetPageRequest::set_allocated_page_id(::storage_service::GetPageRequ
   }
   page_id_ = page_id;
   // @@protoc_insertion_point(field_set_allocated:storage_service.GetPageRequest.page_id)
+}
+
+// sint32 require_batch_id = 2;
+inline void GetPageRequest::clear_require_batch_id() {
+  require_batch_id_ = 0;
+}
+inline int32_t GetPageRequest::_internal_require_batch_id() const {
+  return require_batch_id_;
+}
+inline int32_t GetPageRequest::require_batch_id() const {
+  // @@protoc_insertion_point(field_get:storage_service.GetPageRequest.require_batch_id)
+  return _internal_require_batch_id();
+}
+inline void GetPageRequest::_internal_set_require_batch_id(int32_t value) {
+  
+  require_batch_id_ = value;
+}
+inline void GetPageRequest::set_require_batch_id(int32_t value) {
+  _internal_set_require_batch_id(value);
+  // @@protoc_insertion_point(field_set:storage_service.GetPageRequest.require_batch_id)
 }
 
 // -------------------------------------------------------------------

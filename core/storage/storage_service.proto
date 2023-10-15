@@ -15,6 +15,7 @@ message GetPageRequest {
         sint32 page_no = 2;
     }
 	PageID page_id = 1;
+    sint32 require_batch_id = 2;
 };
 
 message GetPageResponse {

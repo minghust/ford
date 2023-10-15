@@ -31,6 +31,7 @@ void request_pages(brpc::Channel& channel, storage_service::StorageService_Stub&
 
         storage_service::GetPageRequest_PageID page_id;
         
+        storage_service::
         request.set_page_id();
 
         stub.GetPage(&cntl, &request, &response, NULL);

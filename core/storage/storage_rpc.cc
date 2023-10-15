@@ -27,12 +27,13 @@ namespace storage_service{
 
         brpc::ClosureGuard done_guard(done);
 
-        int fd = request->page_id().fd();
+        std::string fd = request->page_id().table_name();
         page_id_t page_no = request->page_id().page_no();
 
         char data[4096];
 
-        disk_manager_->read_page(fd, page_no, data, 4096);
+        // TODO
+        disk_manager_->read_page(1, page_no, data, 4096);
 
         response->set_data(std::string(data, 4096));
 

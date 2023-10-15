@@ -46,7 +46,7 @@ struct LogWriteResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LogWriteResponseDefaultTypeInternal _LogWriteResponse_default_instance_;
 PROTOBUF_CONSTEXPR GetPageRequest_PageID::GetPageRequest_PageID(
     ::_pbi::ConstantInitialized)
-  : fd_(0)
+  : table_name_(&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{})
   , page_no_(0){}
 struct GetPageRequest_PageIDDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GetPageRequest_PageIDDefaultTypeInternal()
@@ -59,7 +59,8 @@ struct GetPageRequest_PageIDDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetPageRequest_PageIDDefaultTypeInternal _GetPageRequest_PageID_default_instance_;
 PROTOBUF_CONSTEXPR GetPageRequest::GetPageRequest(
     ::_pbi::ConstantInitialized)
-  : page_id_(nullptr){}
+  : page_id_(nullptr)
+  , require_batch_id_(0){}
 struct GetPageRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GetPageRequestDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -106,7 +107,7 @@ const uint32_t TableStruct_storage_5fservice_2eproto::offsets[] PROTOBUF_SECTION
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::storage_service::GetPageRequest_PageID, fd_),
+  PROTOBUF_FIELD_OFFSET(::storage_service::GetPageRequest_PageID, table_name_),
   PROTOBUF_FIELD_OFFSET(::storage_service::GetPageRequest_PageID, page_no_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::storage_service::GetPageRequest, _internal_metadata_),
@@ -115,6 +116,7 @@ const uint32_t TableStruct_storage_5fservice_2eproto::offsets[] PROTOBUF_SECTION
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::storage_service::GetPageRequest, page_id_),
+  PROTOBUF_FIELD_OFFSET(::storage_service::GetPageRequest, require_batch_id_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::storage_service::GetPageResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -128,7 +130,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 7, -1, -1, sizeof(::storage_service::LogWriteResponse)},
   { 13, -1, -1, sizeof(::storage_service::GetPageRequest_PageID)},
   { 21, -1, -1, sizeof(::storage_service::GetPageRequest)},
-  { 28, -1, -1, sizeof(::storage_service::GetPageResponse)},
+  { 29, -1, -1, sizeof(::storage_service::GetPageResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -142,19 +144,20 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_storage_5fservice_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\025storage_service.proto\022\017storage_service"
   "\"\036\n\017LogWriteRequest\022\013\n\003log\030\001 \001(\t\"\022\n\020LogW"
-  "riteResponse\"p\n\016GetPageRequest\0227\n\007page_i"
-  "d\030\001 \001(\0132&.storage_service.GetPageRequest"
-  ".PageID\032%\n\006PageID\022\n\n\002fd\030\001 \001(\021\022\017\n\007page_no"
-  "\030\002 \001(\021\"\037\n\017GetPageResponse\022\014\n\004data\030\001 \001(\t2"
-  "\257\001\n\016StorageService\022O\n\010LogWrite\022 .storage"
-  "_service.LogWriteRequest\032!.storage_servi"
-  "ce.LogWriteResponse\022L\n\007GetPage\022\037.storage"
-  "_service.GetPageRequest\032 .storage_servic"
-  "e.GetPageResponseB\003\200\001\001b\006proto3"
+  "riteResponse\"\222\001\n\016GetPageRequest\0227\n\007page_"
+  "id\030\001 \001(\0132&.storage_service.GetPageReques"
+  "t.PageID\022\030\n\020require_batch_id\030\002 \001(\021\032-\n\006Pa"
+  "geID\022\022\n\ntable_name\030\001 \001(\t\022\017\n\007page_no\030\002 \001("
+  "\021\"\037\n\017GetPageResponse\022\014\n\004data\030\001 \001(\t2\257\001\n\016S"
+  "torageService\022O\n\010LogWrite\022 .storage_serv"
+  "ice.LogWriteRequest\032!.storage_service.Lo"
+  "gWriteResponse\022L\n\007GetPage\022\037.storage_serv"
+  "ice.GetPageRequest\032 .storage_service.Get"
+  "PageResponseB\003\200\001\001b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_storage_5fservice_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_storage_5fservice_2eproto = {
-    false, false, 430, descriptor_table_protodef_storage_5fservice_2eproto,
+    false, false, 465, descriptor_table_protodef_storage_5fservice_2eproto,
     "storage_service.proto",
     &descriptor_table_storage_5fservice_2eproto_once, nullptr, 0, 5,
     schemas, file_default_instances, TableStruct_storage_5fservice_2eproto::offsets,
@@ -418,17 +421,24 @@ GetPageRequest_PageID::GetPageRequest_PageID(::PROTOBUF_NAMESPACE_ID::Arena* are
 GetPageRequest_PageID::GetPageRequest_PageID(const GetPageRequest_PageID& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&fd_, &from.fd_,
-    static_cast<size_t>(reinterpret_cast<char*>(&page_no_) -
-    reinterpret_cast<char*>(&fd_)) + sizeof(page_no_));
+  table_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    table_name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_table_name().empty()) {
+    table_name_.Set(from._internal_table_name(), 
+      GetArenaForAllocation());
+  }
+  page_no_ = from.page_no_;
   // @@protoc_insertion_point(copy_constructor:storage_service.GetPageRequest.PageID)
 }
 
 inline void GetPageRequest_PageID::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&fd_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&page_no_) -
-    reinterpret_cast<char*>(&fd_)) + sizeof(page_no_));
+table_name_.InitDefault();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  table_name_.Set("", GetArenaForAllocation());
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+page_no_ = 0;
 }
 
 GetPageRequest_PageID::~GetPageRequest_PageID() {
@@ -442,6 +452,7 @@ GetPageRequest_PageID::~GetPageRequest_PageID() {
 
 inline void GetPageRequest_PageID::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  table_name_.Destroy();
 }
 
 void GetPageRequest_PageID::SetCachedSize(int size) const {
@@ -454,9 +465,8 @@ void GetPageRequest_PageID::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&fd_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&page_no_) -
-      reinterpret_cast<char*>(&fd_)) + sizeof(page_no_));
+  table_name_.ClearToEmpty();
+  page_no_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -466,11 +476,13 @@ const char* GetPageRequest_PageID::_InternalParse(const char* ptr, ::_pbi::Parse
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // sint32 fd = 1;
+      // string table_name = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          fd_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_table_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "storage_service.GetPageRequest.PageID.table_name"));
         } else
           goto handle_unusual;
         continue;
@@ -511,10 +523,14 @@ uint8_t* GetPageRequest_PageID::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // sint32 fd = 1;
-  if (this->_internal_fd() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteSInt32ToArray(1, this->_internal_fd(), target);
+  // string table_name = 1;
+  if (!this->_internal_table_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_table_name().data(), static_cast<int>(this->_internal_table_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "storage_service.GetPageRequest.PageID.table_name");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_table_name(), target);
   }
 
   // sint32 page_no = 2;
@@ -539,9 +555,11 @@ size_t GetPageRequest_PageID::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // sint32 fd = 1;
-  if (this->_internal_fd() != 0) {
-    total_size += ::_pbi::WireFormatLite::SInt32SizePlusOne(this->_internal_fd());
+  // string table_name = 1;
+  if (!this->_internal_table_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_table_name());
   }
 
   // sint32 page_no = 2;
@@ -571,8 +589,8 @@ void GetPageRequest_PageID::MergeFrom(const GetPageRequest_PageID& from) {
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_fd() != 0) {
-    _internal_set_fd(from._internal_fd());
+  if (!from._internal_table_name().empty()) {
+    _internal_set_table_name(from._internal_table_name());
   }
   if (from._internal_page_no() != 0) {
     _internal_set_page_no(from._internal_page_no());
@@ -593,13 +611,14 @@ bool GetPageRequest_PageID::IsInitialized() const {
 
 void GetPageRequest_PageID::InternalSwap(GetPageRequest_PageID* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(GetPageRequest_PageID, page_no_)
-      + sizeof(GetPageRequest_PageID::page_no_)
-      - PROTOBUF_FIELD_OFFSET(GetPageRequest_PageID, fd_)>(
-          reinterpret_cast<char*>(&fd_),
-          reinterpret_cast<char*>(&other->fd_));
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &table_name_, lhs_arena,
+      &other->table_name_, rhs_arena
+  );
+  swap(page_no_, other->page_no_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetPageRequest_PageID::GetMetadata() const {
@@ -633,11 +652,15 @@ GetPageRequest::GetPageRequest(const GetPageRequest& from)
   } else {
     page_id_ = nullptr;
   }
+  require_batch_id_ = from.require_batch_id_;
   // @@protoc_insertion_point(copy_constructor:storage_service.GetPageRequest)
 }
 
 inline void GetPageRequest::SharedCtor() {
-page_id_ = nullptr;
+::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+    reinterpret_cast<char*>(&page_id_) - reinterpret_cast<char*>(this)),
+    0, static_cast<size_t>(reinterpret_cast<char*>(&require_batch_id_) -
+    reinterpret_cast<char*>(&page_id_)) + sizeof(require_batch_id_));
 }
 
 GetPageRequest::~GetPageRequest() {
@@ -668,6 +691,7 @@ void GetPageRequest::Clear() {
     delete page_id_;
   }
   page_id_ = nullptr;
+  require_batch_id_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -681,6 +705,14 @@ const char* GetPageRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_page_id(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // sint32 require_batch_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          require_batch_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -721,6 +753,12 @@ uint8_t* GetPageRequest::_InternalSerialize(
         _Internal::page_id(this).GetCachedSize(), target, stream);
   }
 
+  // sint32 require_batch_id = 2;
+  if (this->_internal_require_batch_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteSInt32ToArray(2, this->_internal_require_batch_id(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -742,6 +780,11 @@ size_t GetPageRequest::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *page_id_);
+  }
+
+  // sint32 require_batch_id = 2;
+  if (this->_internal_require_batch_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::SInt32SizePlusOne(this->_internal_require_batch_id());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -769,6 +812,9 @@ void GetPageRequest::MergeFrom(const GetPageRequest& from) {
   if (from._internal_has_page_id()) {
     _internal_mutable_page_id()->::storage_service::GetPageRequest_PageID::MergeFrom(from._internal_page_id());
   }
+  if (from._internal_require_batch_id() != 0) {
+    _internal_set_require_batch_id(from._internal_require_batch_id());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -786,7 +832,12 @@ bool GetPageRequest::IsInitialized() const {
 void GetPageRequest::InternalSwap(GetPageRequest* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(page_id_, other->page_id_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GetPageRequest, require_batch_id_)
+      + sizeof(GetPageRequest::require_batch_id_)
+      - PROTOBUF_FIELD_OFFSET(GetPageRequest, page_id_)>(
+          reinterpret_cast<char*>(&page_id_),
+          reinterpret_cast<char*>(&other->page_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata GetPageRequest::GetMetadata() const {
