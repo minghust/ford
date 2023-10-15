@@ -6,10 +6,11 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+#include <mutex>
 
-#include "disk_manager.h"
-#include "errors.h"
-#include "page.h"
+#include "storage/disk_manager.h"
+#include "util/errors.h"
+#include "storage/page.h"
 #include "replacer/clock_replacer.h"
 #include "replacer/lru_replacer.h"
 #include "replacer/replacer.h"

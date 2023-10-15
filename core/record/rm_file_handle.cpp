@@ -19,16 +19,18 @@ std::unique_ptr<RmRecord> RmFileHandle::get_record(const Rid& rid, BatchTxn* txn
     // if(context != nullptr)
         // context->lock_mgr_->lock_shared_on_record(context->txn_, rid, fd_);
 
-    auto record = std::make_unique<RmRecord>(file_hdr_.record_size_);
     RmPageHandle page_handle = fetch_page_handle(rid.page_no_);
     if (!Bitmap::is_set(page_handle.bitmap, page_handle.get_slot_no(rid.slot_offset_))) {
         // throw RecordNotFoundError(rid.page_no_, rid.slot_no_);
     }
     char *slot = page_handle.get_slot(rid.slot_offset_);  // record对应的地址
     // copy record into slot 把位于slot的record拷贝一份到当前的record
-    record->key_ = *reinterpret_cast<const itemkey_t*>(slot);
-    memcpy(record->data, slot + sizeof(itemkey_t), file_hdr_.record_size_);
-    record->size = file_hdr_.record_size_;
+    itemkey_t key = *reinterpret_cast<const itemkey_t*>(slot);
+
+    auto record = std::make_unique<RmRecord>(key, file_hdr_.record_size_);
+    
+    memcpy(record->value_, slot + sizeof(itemkey_t), file_hdr_.record_size_);
+    record->value_size_ = file_hdr_.record_size_;
 
     buffer_pool_manager_->unpin_page(page_handle.page->get_page_id(), false);
     // return record;
@@ -176,7 +178,7 @@ void RmFileHandle::update_record(const Rid& rid, char* buf, BatchTxn* txn) {
  * @param {int} page_no 页面号
  * @return {RmPageHandle} 指定页面的句柄
  */
-RmPageHandle RmFileHandle::fetch_page_handle(int page_no) const {
+RmPageHandle RmFileHandle::fetch_page_handle(page_id_t page_no) const {
     // Todo:
     // 使用缓冲池获取指定页面，并生成page_handle返回给上层
     // if page_no is invalid, throw PageNotExistError exception

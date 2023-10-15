@@ -81,7 +81,7 @@ class RmFileHandle {
 
     RmPageHandle create_new_page_handle(BatchTxn* txn);
 
-    RmPageHandle fetch_page_handle(int page_no) const;
+    RmPageHandle fetch_page_handle(page_id_t page_no) const;
 
     DiskManager *disk_manager_;
     BufferPoolManager *buffer_pool_manager_;

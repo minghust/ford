@@ -639,13 +639,13 @@ class GetPageRequest final :
       ::storage_service::GetPageRequest_PageID* page_id);
   ::storage_service::GetPageRequest_PageID* unsafe_arena_release_page_id();
 
-  // sint32 require_batch_id = 2;
+  // uint64 require_batch_id = 2;
   void clear_require_batch_id();
-  int32_t require_batch_id() const;
-  void set_require_batch_id(int32_t value);
+  uint64_t require_batch_id() const;
+  void set_require_batch_id(uint64_t value);
   private:
-  int32_t _internal_require_batch_id() const;
-  void _internal_set_require_batch_id(int32_t value);
+  uint64_t _internal_require_batch_id() const;
+  void _internal_set_require_batch_id(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:storage_service.GetPageRequest)
@@ -656,7 +656,7 @@ class GetPageRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::storage_service::GetPageRequest_PageID* page_id_;
-  int32_t require_batch_id_;
+  uint64_t require_batch_id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_storage_5fservice_2eproto;
 };
@@ -1108,22 +1108,22 @@ inline void GetPageRequest::set_allocated_page_id(::storage_service::GetPageRequ
   // @@protoc_insertion_point(field_set_allocated:storage_service.GetPageRequest.page_id)
 }
 
-// sint32 require_batch_id = 2;
+// uint64 require_batch_id = 2;
 inline void GetPageRequest::clear_require_batch_id() {
-  require_batch_id_ = 0;
+  require_batch_id_ = uint64_t{0u};
 }
-inline int32_t GetPageRequest::_internal_require_batch_id() const {
+inline uint64_t GetPageRequest::_internal_require_batch_id() const {
   return require_batch_id_;
 }
-inline int32_t GetPageRequest::require_batch_id() const {
+inline uint64_t GetPageRequest::require_batch_id() const {
   // @@protoc_insertion_point(field_get:storage_service.GetPageRequest.require_batch_id)
   return _internal_require_batch_id();
 }
-inline void GetPageRequest::_internal_set_require_batch_id(int32_t value) {
+inline void GetPageRequest::_internal_set_require_batch_id(uint64_t value) {
   
   require_batch_id_ = value;
 }
-inline void GetPageRequest::set_require_batch_id(int32_t value) {
+inline void GetPageRequest::set_require_batch_id(uint64_t value) {
   _internal_set_require_batch_id(value);
   // @@protoc_insertion_point(field_set:storage_service.GetPageRequest.require_batch_id)
 }

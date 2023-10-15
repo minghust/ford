@@ -60,7 +60,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR GetPageRequest::GetPageRequest(
     ::_pbi::ConstantInitialized)
   : page_id_(nullptr)
-  , require_batch_id_(0){}
+  , require_batch_id_(uint64_t{0u}){}
 struct GetPageRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR GetPageRequestDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -146,7 +146,7 @@ const char descriptor_table_protodef_storage_5fservice_2eproto[] PROTOBUF_SECTIO
   "\"\036\n\017LogWriteRequest\022\013\n\003log\030\001 \001(\t\"\022\n\020LogW"
   "riteResponse\"\222\001\n\016GetPageRequest\0227\n\007page_"
   "id\030\001 \001(\0132&.storage_service.GetPageReques"
-  "t.PageID\022\030\n\020require_batch_id\030\002 \001(\021\032-\n\006Pa"
+  "t.PageID\022\030\n\020require_batch_id\030\002 \001(\004\032-\n\006Pa"
   "geID\022\022\n\ntable_name\030\001 \001(\t\022\017\n\007page_no\030\002 \001("
   "\021\"\037\n\017GetPageResponse\022\014\n\004data\030\001 \001(\t2\257\001\n\016S"
   "torageService\022O\n\010LogWrite\022 .storage_serv"
@@ -691,7 +691,7 @@ void GetPageRequest::Clear() {
     delete page_id_;
   }
   page_id_ = nullptr;
-  require_batch_id_ = 0;
+  require_batch_id_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -709,10 +709,10 @@ const char* GetPageRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext
         } else
           goto handle_unusual;
         continue;
-      // sint32 require_batch_id = 2;
+      // uint64 require_batch_id = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          require_batch_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarintZigZag32(&ptr);
+          require_batch_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -753,10 +753,10 @@ uint8_t* GetPageRequest::_InternalSerialize(
         _Internal::page_id(this).GetCachedSize(), target, stream);
   }
 
-  // sint32 require_batch_id = 2;
+  // uint64 require_batch_id = 2;
   if (this->_internal_require_batch_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteSInt32ToArray(2, this->_internal_require_batch_id(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_require_batch_id(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -782,9 +782,9 @@ size_t GetPageRequest::ByteSizeLong() const {
         *page_id_);
   }
 
-  // sint32 require_batch_id = 2;
+  // uint64 require_batch_id = 2;
   if (this->_internal_require_batch_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::SInt32SizePlusOne(this->_internal_require_batch_id());
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_require_batch_id());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);

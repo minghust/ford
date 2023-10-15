@@ -21,7 +21,7 @@ public:
 
 class Rid {
 public:
-    int page_no_;
+    page_id_t page_no_;
     int slot_offset_;
 };
 

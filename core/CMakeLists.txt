@@ -26,6 +26,14 @@ set(STORAGE_SRC
         storage/storage_rpc.cc
         storage/disk_manager.cc
         )
+
+set(BUFFER_SRC
+        buffer/bufferpool_manager.cpp
+        buffer/replacer/lru_replacer.cpp)
+
+set(RECORD_SRC
+        record/rm_file_handle.cpp
+        record/rm_manager.cc)
         
 set(LOG_SRC
         log/logreplay.cc
@@ -38,6 +46,8 @@ add_library(ford STATIC
         ${SCHEDULER_SRC}
         ${STORAGE_SRC}
         ${LOG_SRC}
+        ${BUFFER_SRC}
+        ${RECORD_SRC}
         )
 
 set_target_properties(ford PROPERTIES LINKER_LANGUAGE CXX)

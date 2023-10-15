@@ -27,8 +27,7 @@ using batch_id_t = uint64_t;  // batch id type
 #define PAGE_SIZE 4096
 #define BUFFER_POOL_SIZE 65536
 
-#define LOG_FILE_NAME "LOG_FILE"
-const int INVALID_PAGE_ID = -1;                                    // invalid page id
+#define LOG_FILE_NAME "LOG_FILE"                                
 static constexpr int LOG_REPLAY_BUFFER_SIZE = (10 * PAGE_SIZE);                    // size of a log buffer in byte
 
 // Memory region ids for server's hash store buffer and undo log buffer
@@ -65,6 +64,8 @@ const uint64_t MEM_STORE_META_END = 0xE0FF0E0F;
 #define INVALID_TXN_ID -1
 #define INVALID_NODE_ID -1
 #define INVALID_BATCH_ID -1
+#define INVALID_FRAME_ID -1
+#define INVALID_PAGE_ID -1U
 
 #define PAGE_NO_RM_FILE_HDR 0
 #define OFFSET_PAGE_HDR 0

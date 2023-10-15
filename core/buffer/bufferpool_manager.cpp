@@ -1,4 +1,4 @@
-#include "buffer_pool_manager.h"
+#include "bufferpool_manager.h"
 
 /**
  * @description: 从free_list或replacer中得到可淘汰帧页的 *frame_id
@@ -68,7 +68,7 @@ Page* BufferPoolManager::fetch_page(PageId page_id) {
     // 3.     调用disk_manager_的read_page读取目标页到frame
     // 4.     固定目标页，更新pin_count_
     // 5.     返回目标页
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
     auto iter = page_table_.find(page_id);
     // 1 该page在页表中存在（说明该page在缓冲池中）
     if (iter != page_table_.end()) {
@@ -110,7 +110,7 @@ bool BufferPoolManager::unpin_page(PageId page_id, bool is_dirty) {
     // 2.2 若pin_count_大于0，则pin_count_自减一
     // 2.2.1 若自减后等于0，则调用replacer_的Unpin
     // 3 根据参数is_dirty，更改P的is_dirty_
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
 
     auto iter = page_table_.find(page_id);
     // 1 该page在页表中不存在
@@ -149,7 +149,7 @@ bool BufferPoolManager::flush_page(PageId page_id) {
     // 2. 无论P是否为脏都将其写回磁盘。
     // 3. 更新P的is_dirty_
     
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
     if (page_id.page_no == INVALID_PAGE_ID) {
         return false;
     }
@@ -178,7 +178,7 @@ Page* BufferPoolManager::new_page(PageId* page_id) {
     // 3.   将frame的数据写回磁盘
     // 4.   固定frame，更新pin_count_
     // 5.   返回获得的page
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
 
     frame_id_t frame_id = INVALID_FRAME_ID;
     // 1 无法得到victim frame_id
@@ -204,7 +204,7 @@ bool BufferPoolManager::delete_page(PageId page_id) {
     // 1.   在page_table_中查找目标页，若不存在返回true
     // 2.   若目标页的pin_count不为0，则返回false
     // 3.   将目标页数据写回磁盘，从页表中删除目标页，重置其元数据，将其加入free_list_，返回true
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
 
     auto iter = page_table_.find(page_id);
     // 1 该page在页表中不存在
@@ -232,7 +232,7 @@ bool BufferPoolManager::delete_page(PageId page_id) {
  * @param {int} fd 文件句柄
  */
 void BufferPoolManager::flush_all_pages(int fd) {
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
 
     for (size_t i = 0; i < pool_size_; i++) {
         Page *page = &pages_[i];

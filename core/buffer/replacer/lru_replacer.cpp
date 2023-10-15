@@ -12,7 +12,7 @@ LRUReplacer::~LRUReplacer() = default;
 bool LRUReplacer::victim(frame_id_t* frame_id) {
     // C++17 std::scoped_lock
     // 它能够避免死锁发生，其构造函数能够自动进行上锁操作，析构函数会对互斥量进行解锁操作，保证线程安全。
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
     if (LRUlist_.empty()) {
         return false;
     }
@@ -29,7 +29,7 @@ bool LRUReplacer::victim(frame_id_t* frame_id) {
  * @param {frame_id_t} 需要固定的frame的id
  */
 void LRUReplacer::pin(frame_id_t frame_id) {
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
     // 哈希表中找不到该frame_id
     if (LRUhash_.count(frame_id) == 0) {
         return;
@@ -44,7 +44,7 @@ void LRUReplacer::pin(frame_id_t frame_id) {
  * @param {frame_id_t} frame_id 取消固定的frame的id
  */
 void LRUReplacer::unpin(frame_id_t frame_id) {
-    std::scoped_lock lock{latch_};
+    std::unique_lock<std::mutex> lock{latch_};
     // 哈希表中已有该frame_id，直接退出，避免重复添加到replacer
     if (LRUhash_.count(frame_id) != 0) {
         return;
