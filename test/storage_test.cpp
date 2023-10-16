@@ -92,6 +92,7 @@ void* generate_redo_logs(void* arg) {
     if(!cntl.Failed()) {
         RDMA_LOG(INFO) << "Write batch1 log succeed, latency = " << cntl.latency_us() << "us";
     }
+    cntl.Reset();
 
     request_page_no = rid1.page_no_;
     need_request_page = true;
@@ -122,6 +123,7 @@ void* generate_redo_logs(void* arg) {
     if(!cntl.Failed()) {
         RDMA_LOG(INFO) << "Write batch2 log succeed, latency = " << cntl.latency_us() << "us";
     }
+    cntl.Reset();
 
     request_page_no = rid3.page_no_;
     need_request_page = true;
@@ -144,10 +146,12 @@ void* generate_redo_logs(void* arg) {
     if(!cntl.Failed()) {
         RDMA_LOG(INFO) << "Write batch3 log succeed, latency = " << cntl.latency_us() << "us";
     }
+    cntl.Reset();
 
     request_page_no = rid4.page_no_;
     need_request_page = true;
     buffer_mgr->flush_all_pages(table_file->fd_);
+    RDMA_LOG(INFO) << "Finish flush_all_pages after executing txn3";
 }
 
 int main(int argc, char* argv[]) {

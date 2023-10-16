@@ -1,4 +1,5 @@
 #include "storage_rpc.h"
+#include "util/debug.h"
 
 namespace storage_service{
 
@@ -26,6 +27,8 @@ namespace storage_service{
                        ::google::protobuf::Closure* done){
 
         brpc::ClosureGuard done_guard(done);
+
+        RDMA_LOG(INFO) << "handle GetPage request";
 
         std::string fd = request->page_id().table_name();
         page_id_t page_no = request->page_id().page_no();

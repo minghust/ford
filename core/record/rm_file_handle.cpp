@@ -89,6 +89,8 @@ Rid RmFileHandle::insert_record(itemkey_t key, char* buf, BatchTxn* txn) {
     log->set_meta(OFFSET_BITMAP + bucket_no, page_handle.bitmap[bucket_no], 
                     page_handle.page_hdr->num_records_, file_hdr_.first_free_page_no_);
     txn->logs.push_back(log);
+
+    return rid;
 }
 
 

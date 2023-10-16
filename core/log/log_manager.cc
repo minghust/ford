@@ -17,7 +17,7 @@ void LogManager::write_batch_log_to_disk(std::string batch_log) {
 
     lseek(log_file_fd_, 0, SEEK_END);
     ssize_t bytes_write = write(log_file_fd_, batch_log.c_str(), batch_log.length() * sizeof(char));
-    assert(bytes_write != batch_log.length() * sizeof(char));
+    assert(bytes_write == batch_log.length() * sizeof(char));
 
     log_replay_->add_max_replay_off_(bytes_write);
 }
