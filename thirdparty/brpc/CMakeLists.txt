@@ -23,7 +23,7 @@ option(WITH_MESALINK "With MesaLink" OFF)
 option(DEBUG "Print debug logs" OFF)
 option(WITH_DEBUG_SYMBOLS "With debug symbols" ON)
 option(WITH_THRIFT "With thrift framed protocol supported" OFF)
-option(WITH_SNAPPY "With snappy" OFF)
+option(WITH_SNAPPY "With snappy" ON)
 option(WITH_RDMA "With RDMA" OFF)
 option(BUILD_UNIT_TESTS "Whether to build unit tests" OFF)
 option(BUILD_BRPC_TOOLS "Whether to build brpc tools" ON)
@@ -377,6 +377,7 @@ set(BUTIL_SOURCES
     ${PROJECT_SOURCE_DIR}/src/butil/status.cpp
     ${PROJECT_SOURCE_DIR}/src/butil/string_printf.cpp
     ${PROJECT_SOURCE_DIR}/src/butil/thread_local.cpp
+    ${PROJECT_SOURCE_DIR}/src/butil/thread_key.cpp
     ${PROJECT_SOURCE_DIR}/src/butil/unix_socket.cpp
     ${PROJECT_SOURCE_DIR}/src/butil/endpoint.cpp
     ${PROJECT_SOURCE_DIR}/src/butil/fd_utility.cpp

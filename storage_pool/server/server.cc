@@ -32,6 +32,10 @@ int main(int argc, char* argv[]) {
     auto disk_manager = std::make_shared<DiskManager>();
     auto log_replay = std::make_shared<LogReplay>(disk_manager.get()); 
     auto log_manager = std::make_shared<LogManager>(disk_manager.get(), log_replay.get());
+
+    // used for test
+    disk_manager->create_file("table");
+
     auto server = std::make_shared<Server>(local_port, use_rdma, disk_manager.get(), log_manager.get());
 
 }

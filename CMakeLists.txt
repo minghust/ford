@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.3)
 
 project(FORD)
 
+# option(WITH_SNAPPY "With snappy" ON)
+
 execute_process(
     COMMAND bash -c "find ${PROJECT_SOURCE_DIR}/ -type d -regex \".*output/include$\" | head -n1 | xargs dirname | tr -d '\n'"
     OUTPUT_VARIABLE OUTPUT_PATH
@@ -52,6 +54,15 @@ if ((NOT LEVELDB_INCLUDE_PATH) OR (NOT LEVELDB_LIB))
 endif()
 include_directories(${LEVELDB_INCLUDE_PATH})
 
+# if(WITH_SNAPPY)
+find_path(SNAPPY_INCLUDE_PATH NAMES snappy.h)
+find_library(SNAPPY_LIB NAMES snappy)
+if ((NOT SNAPPY_INCLUDE_PATH) OR (NOT SNAPPY_LIB))
+    message(FATAL_ERROR "Fail to find snappy")
+endif()
+include_directories(${SNAPPY_INCLUDE_PATH})
+# endif()
+
 find_package(OpenSSL)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
@@ -66,6 +77,7 @@ set(DYNAMIC_LIB
     ${GFLAGS_LIBRARY}
     ${PROTOBUF_LIBRARIES}
     ${LEVELDB_LIB}
+    ${SNAPPY_LIB}
     ${OPENSSL_CRYPTO_LIBRARY}
     ${OPENSSL_SSL_LIBRARY}
     ${THRIFT_LIB}
