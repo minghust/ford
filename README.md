@@ -24,7 +24,7 @@ We implement a coroutine-enabled framework that runs FORD and its counterparts i
   - Compiler: g++ 7.5.0 (at least)
   - Libraries: ibverbs, pthread, boost_coroutine, boost_context, boost_system
 - Machines
-  - At least 3 machines, in which one acts as the compute pool and other two act as the memory pool to maintain a primary-backup replication
+  - 3 machines, one acts as the compute pool and other two act as the memory pool to maintain a primary-backup replication
 
 
 # Configure
